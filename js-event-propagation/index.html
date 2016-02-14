@@ -1,0 +1,188 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<title>Event伝播の検証 [JavaScript]</title>
+	<style>
+		body {
+			width: 980px;
+			margin-right: auto;
+			margin-left: auto;
+		}
+		.container {
+			border: 2px solid gray;
+			border-radius: 6px;
+			padding: 10px;
+			margin-top: 20px;
+		}
+		.container h2 {
+			margin-top: 0;
+		}
+		.container div {
+			border: solid 2px black;
+			padding: 5px;
+		}
+		.log {
+			background: silver;
+			margin-bottom: 0;
+		}
+	</style>
+</head>
+<body>
+	<h1>Event伝播の検証 [JavaScript]</h1>
+	<div class="container">
+		<h2>Element.addEventListenerの第3引数useCaptureの動作確認</h2>
+		<div class="outer">
+			outer
+			<div class="inner">
+				inner<br>
+				<button class="target">target</button><br>
+				※同じ要素に対して複数のEventListenerをセットした場合はセットした順になるらしい（今回はuseCapture = false → true）
+			</div>
+		</div>
+		<pre class="log"></pre>
+		<script>
+			(function () {
+				var count = 0;
+				var container = document.currentScript.parentNode;
+				var outer = container.querySelector(".outer");
+				var inner = container.querySelector(".inner");
+				var target = container.querySelector(".target");
+				var log = container.querySelector(".log");
+				
+				container.addEventListener("click", function () {
+					log.appendChild(document.createTextNode((count++) + ": container\n"));
+				});
+				container.addEventListener("click", function () {
+					log.appendChild(document.createTextNode((count++) + ": container (useCapture = true)\n"));
+				}, true);
+				
+				outer.addEventListener("click", function () {
+					log.appendChild(document.createTextNode((count++) + ": outer\n"));
+				});
+				outer.addEventListener("click", function () {
+					log.appendChild(document.createTextNode((count++) + ": outer (useCapture = true)\n"));
+				}, true);
+				
+				inner.addEventListener("click", function () {
+					log.appendChild(document.createTextNode((count++) + ": inner\n"));
+				});
+				inner.addEventListener("click", function () {
+					log.appendChild(document.createTextNode((count++) + ": inner (useCapture = true)\n"));
+				}, true);
+				
+				target.addEventListener("click", function () {
+					log.appendChild(document.createTextNode((count++) + ": target\n"));
+				});
+				target.addEventListener("click", function () {
+					log.appendChild(document.createTextNode((count++) + ": target (useCapture = true)\n"));
+				}, true);
+			})();
+		</script>
+	</div>
+	
+	<div class="container">
+		<h2>Event.stopPropagation()の確認1</h2>
+		<div class="outer">
+			outer
+			<div class="inner">
+				inner<br>
+				※ useCapture = falseの方でevent.stopPropagation()<br>
+				<button class="target">target</button>
+			</div>
+		</div>
+		<pre class="log"></pre>
+		<script>
+			(function () {
+				var count = 0;
+				var container = document.currentScript.parentNode;
+				var outer = container.querySelector(".outer");
+				var inner = container.querySelector(".inner");
+				var target = container.querySelector(".target");
+				var log = container.querySelector(".log");
+				
+				container.addEventListener("click", function () {
+					log.appendChild(document.createTextNode((count++) + ": container\n"));
+				});
+				container.addEventListener("click", function () {
+					log.appendChild(document.createTextNode((count++) + ": container (useCapture = true)\n"));
+				}, true);
+				
+				outer.addEventListener("click", function () {
+					log.appendChild(document.createTextNode((count++) + ": outer\n"));
+				});
+				outer.addEventListener("click", function () {
+					log.appendChild(document.createTextNode((count++) + ": outer (useCapture = true)\n"));
+				}, true);
+				
+				inner.addEventListener("click", function (event) {
+					event.stopPropagation();
+					log.appendChild(document.createTextNode((count++) + ": inner\n"));
+					log.appendChild(document.createTextNode("useCapture = falseの方でevent.stopPropagation()\n"));
+				});
+				inner.addEventListener("click", function () {
+					log.appendChild(document.createTextNode((count++) + ": inner (useCapture = true)\n"));
+				}, true);
+				
+				target.addEventListener("click", function () {
+					log.appendChild(document.createTextNode((count++) + ": target\n"));
+				});
+				target.addEventListener("click", function () {
+					log.appendChild(document.createTextNode((count++) + ": target (useCapture = true)\n"));
+				}, true);
+			})();
+		</script>
+	</div>
+	
+	<div class="container">
+		<h2>Event.stopPropagation()の確認2</h2>
+		<div class="outer">
+			outer
+			<div class="inner">
+				inner<br>
+				※ useCapture = trueの方でevent.stopPropagation()<br>
+				<button class="target">target</button>
+			</div>
+		</div>
+		<pre class="log"></pre>
+		<script>
+			(function () {
+				var count = 0;
+				var container = document.currentScript.parentNode;
+				var outer = container.querySelector(".outer");
+				var inner = container.querySelector(".inner");
+				var target = container.querySelector(".target");
+				var log = container.querySelector(".log");
+				
+				container.addEventListener("click", function () {
+					log.appendChild(document.createTextNode((count++) + ": container\n"));
+				});
+				container.addEventListener("click", function () {
+					log.appendChild(document.createTextNode((count++) + ": container (useCapture = true)\n"));
+				}, true);
+				
+				outer.addEventListener("click", function () {
+					log.appendChild(document.createTextNode((count++) + ": outer\n"));
+				});
+				outer.addEventListener("click", function () {
+					log.appendChild(document.createTextNode((count++) + ": outer (useCapture = true)\n"));
+				}, true);
+				
+				inner.addEventListener("click", function () {
+					log.appendChild(document.createTextNode((count++) + ": inner\n"));
+				});
+				inner.addEventListener("click", function (event) {
+					event.stopPropagation();
+					log.appendChild(document.createTextNode((count++) + ": inner (useCapture = true)\n"));
+					log.appendChild(document.createTextNode("useCapture = trueの方でevent.stopPropagation()\n"));
+				}, true);
+				
+				target.addEventListener("click", function () {
+					log.appendChild(document.createTextNode((count++) + ": target\n"));
+				});
+				target.addEventListener("click", function () {
+					log.appendChild(document.createTextNode((count++) + ": target (useCapture = true)\n"));
+				}, true);
+			})();
+		</script>
+	</div>
+</body>
