@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>POSTしたときの通信内容確認 [HTML]</title>
+	<style>
+		body {
+			width: 980px;
+			margin-right: auto;
+			margin-left: auto;
+		}
+		pre.code {
+			background: #F5F5F5;
+			border: solid black 2px;
+			padding: 10px;
+		}
+	</style>
+</head>
+<body>
+<h1>POSTしたときの通信内容確認 [HTML]</h1>
+
+<h2>1. 通常の&lt;form&gt;によるPOST</h2>
+<form method="post" action="/dummy/form">
+	<input type="file" name="file-test">
+	<input type="text" name="text-test" value="aaa">
+	<input type="submit" value="POST">
+</form>
+Header
+<pre class="code">
+Content-Type:application/x-www-form-urlencoded
+</pre>
+Body
+<pre class="code">
+file-test=test-pic.jpg&amp;text-test=aaa
+</pre>
+
+
+<h2>2. JavaScriptによるPOST (Form)</h2>
+<form id="form1">
+	<input type="file" name="file-test">
+	<input type="text" name="text-test" value="aaa">
+	<input type="submit" value="POST">
+</form>
+Script
+<pre class="code">
+var data = new FormData(document.getElementById("form1"));
+fetch("/dummy/js/formdata/html", {
+	method: "post",
+	body: data
+});
+</pre>
+Header
+<pre class="code">
+content-type:multipart/form-data; boundary=----WebKitFormBoundaryR6Owro7IYyNPyj2V
+</pre>
+Body
+<pre class="code">
+------WebKitFormBoundaryR6Owro7IYyNPyj2V
+Content-Disposition: form-data; name="file-test"; filename="test-pic.jpg"
+Content-Type: image/jpeg
+
+
+------WebKitFormBoundaryR6Owro7IYyNPyj2V
+Content-Disposition: form-data; name="text-test"
+
+aaa
+------WebKitFormBoundaryR6Owro7IYyNPyj2V--
+</pre>
+<script type="text/javascript">
+	document.getElementById("form1").addEventListener("submit", evt => {
+		evt.preventDefault();
+		var data = new FormData(document.getElementById("form1"));
+		fetch("/dummy/js/formdata/html", {
+			method: "post",
+			body: data
+		});
+	});
+</script>
+
+<h2>3. JavaScriptによるPOST (FormData)</h2>
+<p>
+	<input type="button" value="POST" id="post-by-js-formdata">
+</p>
+Script
+<pre class="code">
+var data = new FormData();
+data.append("key1", "aaa");
+data.append("key2", "bbb");
+data.append("key2", "111");
+fetch("/dummy/js/formdata/js", {
+	method: "post",
+	body: data
+});
+</pre>
+Header
+<pre class="code">
+content-type:multipart/form-data; boundary=----WebKitFormBoundaryBVmwnK3AahF4DqPD
+</pre>
+Body
+<pre class="code">
+------WebKitFormBoundaryBVmwnK3AahF4DqPD
+Content-Disposition: form-data; name="key1"
+
+aaa
+------WebKitFormBoundaryBVmwnK3AahF4DqPD
+Content-Disposition: form-data; name="key2"
+
+bbb
+------WebKitFormBoundaryBVmwnK3AahF4DqPD
+Content-Disposition: form-data; name="key2"
+
+111
+------WebKitFormBoundaryBVmwnK3AahF4DqPD--</pre>
+<script type="text/javascript">
+	document.getElementById("post-by-js-formdata").addEventListener("click", evt => {
+		var data = new FormData();
+		data.append("key1", "aaa");
+		data.append("key2", "bbb");
+		data.append("key2", "111");
+		fetch("/dummy/js/formdata/js", {
+			method: "post",
+			body: data
+		});
+	});
+</script>
+
+
+<h2>4. JavaScriptによるPOST (Raw string)</h2>
+<p>
+	<input type="button" value="POST" id="post-by-js-raw-string">
+</p>
+Script
+<pre class="code">
+fetch("/dummy/js/raw/string", {
+	method: "post",
+	body: "bbb"
+});
+</pre>
+Header
+<pre class="code">
+content-type:text/plain;charset=UTF-8
+</pre>
+Body
+<pre class="code">
+bbb
+</pre>
+<script type="text/javascript">
+	document.getElementById("post-by-js-raw-string").addEventListener("click", evt => {
+		fetch("/dummy/js/raw/string", {
+			method: "post",
+			body: "bbb"
+		});
+	});
+</script>
+
+<h2>5. JavaScriptによるPOST (Raw file)</h2>
+<p>
+	<input type="file" name="file-test" id="file1">
+	<input type="button" value="POST" id="post-by-js-raw-file">
+</p>
+Script
+<pre class="code">
+var data = new FormData(document.getElementById("file1"));
+fetch("/dummy/js/raw/file", {
+	method: "post",
+	body: data
+});
+</pre>
+Header
+<pre class="code">
+content-type:multipart/form-data; boundary=----WebKitFormBoundaryBaMWRbce8zSePI3J
+</pre>
+Body
+<pre class="code">
+------WebKitFormBoundaryBaMWRbce8zSePI3J--
+</pre>
+<script type="text/javascript">
+	document.getElementById("post-by-js-raw-file").addEventListener("click", evt => {
+		var data = new FormData(document.getElementById("file1"));
+		fetch("/dummy/js/raw/file", {
+			method: "post",
+			body: data
+		});
+	});
+</script>
+
+<h2>6. JavaScriptによるPOST (JSON)</h2>
+<p>
+	<input type="button" value="POST" id="post-by-js-json">
+</p>
+Script
+<pre class="code">
+fetch("/dummy/js/raw/json", {
+	method: "post",
+	headers: {
+		"Content-Type": "application/json"
+	},
+	body: JSON.stringify({
+		a: 1,
+		b: 2
+	})
+});
+</pre>
+Header
+<pre class="code">
+</pre>
+Body
+<pre class="code">
+</pre>
+<script type="text/javascript">
+	document.getElementById("post-by-js-json").addEventListener("click", evt => {
+		fetch("/dummy/js/raw/json", {
+			method: "post",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({
+				a: 1,
+				b: 2
+			})
+		});
+	});
+</script>
+</body>
