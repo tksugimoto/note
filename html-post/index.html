@@ -28,7 +28,7 @@ Header
 <pre class="code">
 Content-Type:application/x-www-form-urlencoded
 </pre>
-Body
+Body (FormData)
 <pre class="code">
 file-test=test-pic.jpg&amp;text-test=aaa
 </pre>
@@ -52,7 +52,7 @@ Header
 <pre class="code">
 content-type:multipart/form-data; boundary=----WebKitFormBoundaryR6Owro7IYyNPyj2V
 </pre>
-Body
+Body (FormData)
 <pre class="code">
 ------WebKitFormBoundaryR6Owro7IYyNPyj2V
 Content-Disposition: form-data; name="file-test"; filename="test-pic.jpg"
@@ -95,7 +95,7 @@ Header
 <pre class="code">
 content-type:multipart/form-data; boundary=----WebKitFormBoundaryBVmwnK3AahF4DqPD
 </pre>
-Body
+Body (FormData)
 <pre class="code">
 ------WebKitFormBoundaryBVmwnK3AahF4DqPD
 Content-Disposition: form-data; name="key1"
@@ -139,7 +139,7 @@ Header
 <pre class="code">
 content-type:text/plain;charset=UTF-8
 </pre>
-Body
+Body (Raw)
 <pre class="code">
 bbb
 </pre>
@@ -169,7 +169,7 @@ Header
 <pre class="code">
 content-type:multipart/form-data; boundary=----WebKitFormBoundaryBaMWRbce8zSePI3J
 </pre>
-Body
+Body (Raw)
 <pre class="code">
 ------WebKitFormBoundaryBaMWRbce8zSePI3J--
 </pre>
@@ -204,7 +204,7 @@ Header
 <pre class="code">
 content-type:application/json
 </pre>
-Body
+Body (Raw)
 <pre class="code">
 {"a":1,"b":2}
 </pre>
