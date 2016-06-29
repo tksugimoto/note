@@ -132,36 +132,7 @@ Content-Disposition: form-data; name="key2"
 	});
 </script>
 
-
-<h2>4. JavaScriptによるPOST (Raw string)</h2>
-<p>
-	<input type="button" value="POST" id="post-by-js-raw-string">
-</p>
-Script
-<pre class="code">
-fetch("/dummy/js/raw/string", {
-	method: "post",
-	body: "bbb"
-});
-</pre>
-Header
-<pre class="code">
-content-type:text/plain;charset=UTF-8
-</pre>
-Body (Raw)
-<pre class="code">
-bbb
-</pre>
-<script type="text/javascript">
-	document.getElementById("post-by-js-raw-string").addEventListener("click", evt => {
-		fetch("/dummy/js/raw/string", {
-			method: "post",
-			body: "bbb"
-		});
-	});
-</script>
-
-<h2>5. JavaScriptによるPOST (FormData with file)</h2>
+<h2>4. JavaScriptによるPOST (FormData with file)</h2>
 <p>
 	<input type="file" name="file-test" id="file1">
 	<input type="button" value="POST" id="post-by-js-raw-file">
@@ -201,6 +172,35 @@ aaa
 		fetch("/dummy/js/raw/file", {
 			method: "post",
 			body: data
+		});
+	});
+</script>
+
+
+<h2>5. JavaScriptによるPOST (Raw string)</h2>
+<p>
+	<input type="button" value="POST" id="post-by-js-raw-string">
+</p>
+Script
+<pre class="code">
+fetch("/dummy/js/raw/string", {
+	method: "post",
+	body: "bbb"
+});
+</pre>
+Header
+<pre class="code">
+content-type:text/plain;charset=UTF-8
+</pre>
+Body (Raw)
+<pre class="code">
+bbb
+</pre>
+<script type="text/javascript">
+	document.getElementById("post-by-js-raw-string").addEventListener("click", evt => {
+		fetch("/dummy/js/raw/string", {
+			method: "post",
+			body: "bbb"
 		});
 	});
 </script>
