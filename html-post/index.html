@@ -161,14 +161,16 @@ bbb
 	});
 </script>
 
-<h2>5. JavaScriptによるPOST (Raw file)</h2>
+<h2>5. JavaScriptによるPOST (FormData with file)</h2>
 <p>
 	<input type="file" name="file-test" id="file1">
 	<input type="button" value="POST" id="post-by-js-raw-file">
 </p>
 Script
 <pre class="code">
-var data = new FormData(document.getElementById("file1"));
+var data = new FormData();
+data.append("file", document.getElementById("file1").files[0]);
+data.append("key", "aaa");
 fetch("/dummy/js/raw/file", {
 	method: "post",
 	body: data
@@ -176,15 +178,26 @@ fetch("/dummy/js/raw/file", {
 </pre>
 Header
 <pre class="code">
-content-type:multipart/form-data; boundary=----WebKitFormBoundaryBaMWRbce8zSePI3J
+content-type:multipart/form-data; boundary=----WebKitFormBoundaryT5FSlKNDJROBCMtY
 </pre>
 Body (Raw)
 <pre class="code">
-------WebKitFormBoundaryBaMWRbce8zSePI3J--
+------WebKitFormBoundaryT5FSlKNDJROBCMtY
+Content-Disposition: form-data; name="file"; filename="test.jpg"
+Content-Type: image/jpeg
+
+
+------WebKitFormBoundaryT5FSlKNDJROBCMtY
+Content-Disposition: form-data; name="key"
+
+aaa
+------WebKitFormBoundaryT5FSlKNDJROBCMtY--
 </pre>
 <script type="text/javascript">
 	document.getElementById("post-by-js-raw-file").addEventListener("click", evt => {
-		var data = new FormData(document.getElementById("file1"));
+		var data = new FormData();
+		data.append("file", document.getElementById("file1").files[0]);
+		data.append("key", "aaa");
 		fetch("/dummy/js/raw/file", {
 			method: "post",
 			body: data
