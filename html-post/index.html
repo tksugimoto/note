@@ -19,18 +19,27 @@
 <h1>POSTしたときの通信内容確認 [HTML]</h1>
 
 <h2>1. 通常の&lt;form&gt;によるPOST</h2>
-<form method="post" action="/dummy/form">
+<form method="post" action="/dummy/form" enctype="multipart/form-data">
 	<input type="file" name="file-test">
 	<input type="text" name="text-test" value="aaa">
 	<input type="submit" value="POST">
 </form>
 Header
 <pre class="code">
-Content-Type:application/x-www-form-urlencoded
+Content-Type:multipart/form-data; boundary=----WebKitFormBoundarySpuKuI8Xf4oV2uKR
 </pre>
 Body (FormData)
 <pre class="code">
-file-test=test-pic.jpg&amp;text-test=aaa
+------WebKitFormBoundarySpuKuI8Xf4oV2uKR
+Content-Disposition: form-data; name="file-test"; filename="test.jpg"
+Content-Type: image/jpeg
+
+
+------WebKitFormBoundarySpuKuI8Xf4oV2uKR
+Content-Disposition: form-data; name="text-test"
+
+aaa
+------WebKitFormBoundarySpuKuI8Xf4oV2uKR--
 </pre>
 
 
