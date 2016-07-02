@@ -244,4 +244,72 @@ Body (Raw)
 		});
 	});
 </script>
+
+<h2>7. JavaScriptによるPOST (File, fetch)</h2>
+<p>
+	<input type="file" name="file-test" id="file2">
+	<input type="button" value="POST" id="post-by-js-raw-file-fetch">
+</p>
+Script
+<pre class="code">
+var file = document.getElementById("file2").files[0];
+fetch("/dummy/js/raw/file/fetch", {
+	method: "post",
+	headers: {
+		"Content-Type": file.type
+	},
+	body: file
+});
+</pre>
+Header例（png画像の場合）
+<pre class="code">
+content-type: image/png
+</pre>
+Body (Raw)
+<pre class="code">
+
+</pre>
+<script type="text/javascript">
+	document.getElementById("post-by-js-raw-file-fetch").addEventListener("click", evt => {
+		var file = document.getElementById("file2").files[0];
+		fetch("/dummy/js/raw/file/fetch", {
+			method: "post",
+			headers: {
+				"Content-Type": file.type
+			},
+			body: file
+		});
+	});
+</script>
+
+<h2>8. JavaScriptによるPOST (File, XMLHttpRequest)</h2>
+<p>
+	<input type="file" name="file-test" id="file3">
+	<input type="button" value="POST" id="post-by-js-raw-file-XMLHttpRequest">
+</p>
+Script
+<pre class="code">
+var file = document.getElementById("file3").files[0];
+var xhr = new XMLHttpRequest();
+xhr.open("post", "/dummy/js/raw/file/XMLHttpRequest", true);
+xhr.setRequestHeader("Content-Type", file.type);
+xhr.send(file);
+</pre>
+Header例（png画像の場合）
+<pre class="code">
+Content-Type: image/png
+</pre>
+Body (Raw)
+<pre class="code">
+
+</pre>
+<script type="text/javascript">
+	document.getElementById("post-by-js-raw-file-XMLHttpRequest").addEventListener("click", evt => {
+		var file = document.getElementById("file3").files[0];
+		var xhr = new XMLHttpRequest();
+		xhr.open("post", "/dummy/js/raw/file/XMLHttpRequest", true);
+		xhr.setRequestHeader("Content-Type", file.type);
+		xhr.send(file);
+	});
+</script>
 </body>
