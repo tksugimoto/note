@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-	<title>ローカルファイルへのリンクを悪意あるページが自動的に開くテスト [JavaScript]</title>
+	<title>悪意あるページがローカルファイルへのリンクを自動的に開けるか確認するテストページ [JavaScript]</title>
 	<style>
 		body {
 			width: 980px;
@@ -17,18 +17,19 @@
 	</style>
 </head>
 <body>
-	<h1>ローカルファイルへのリンクを悪意あるページが自動的に開くテスト [JavaScript]</h1>
+	<h1>悪意あるページがローカルファイルへのリンクを自動的に開けるか確認するテストページ [JavaScript]</h1>
 	<p>
-		ChromeはWebページ上にあるローカルファイルへのリンクを開くことがセキュリティ上の理由によりできなくされている。
-		特定のChrome拡張を使うことでその制限を回避してローカルファイルへのリンクを開くことが出来るようになるが、悪意あるページに勝手にローカルファイルを開かれる可能性がある。
+		Chromeでは、セキュリティ上の理由により、Webページ上にあるローカルファイルへのリンクを開くことはできない。<br>
+		特定のChrome拡張を使うことでその制限を回避してローカルファイルへのリンクを開くことが出来るようになる。<br>
+		しかし、拡張のセキュリティ対策が不適切である場合に、悪意あるページに勝手にローカルファイルを開かれる可能性がある。<br>
 		その確認用。
 	</p>
 	<div class="container">
 		<p>
-			<a href="file:///C:/temp/test.txt" id="local-file-link">file:///C:/temp/test.txt</a>
+			<a href="file:///C:/temp/test.txt" id="local-file-link">file:///C:/temp/test.txt（こちらをクリックして開かれるのはOK）</a>
 		</p>
 		<p>
-			<button id="open-link">↑のリンクを5回開く</button>
+			<button id="open-link">↑のリンクを5回開く（こちらを押して開かれたらNG）</button>
 		</p>
 	</div>
 	<script>
