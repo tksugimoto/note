@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>クリップボードの中身のhtmlを確認 [JavaScript]</title>
+	<style>
+		body {
+			width: 700px;
+			margin-right: auto;
+			margin-left: auto;
+		}
+		#input {
+			width: 100%;
+			height: 100px;
+		}
+		pre {
+			background: lightgray;
+			border: solid black 2px;
+			padding: 10px;
+			white-space: pre-line;
+		}
+	</style>
+</head>
+<body>
+<h1>クリップボードの中身のhtmlを確認</h1>
+<textarea id="input" placeholder="ここにペースト"></textarea>
+<h2>text</h2>
+<pre id="output_text"></pre>
+<h2>html</h2>
+<pre id="output_html"></pre>
+<script type="text/javascript">
+document.getElementById("input").addEventListener("paste", evt => {
+	evt.preventDefault();
+	const clipboardData = evt.clipboardData;
+
+	const text = clipboardData.getData("text/plain");
+	document.getElementById("output_text").innerText = text;
+
+	const html = clipboardData.getData("text/html");
+	document.getElementById("output_html").innerText = html;
+});
+</script>
+</body>
