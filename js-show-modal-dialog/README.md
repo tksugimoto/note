@@ -1,2 +1,2 @@
 # showModalDialogの動作確認
-http://tksugimoto.github.io/note/js-show-modal-dialog/
+https://tksugimoto.github.io/note/js-show-modal-dialog/
