@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>showModalDialogの動作確認</title>
+	<style>
+		body {
+			width: 800px;
+			margin-right: auto;
+			margin-left: auto;
+		}
+		#code {
+			background: #F5F5F5;
+			border: solid black 2px;
+			padding: 10px;
+		}
+		#textarea {
+			width: 100%
+		}
+	</style>
+</head>
+<body>
+<h1>showModalDialogの動作確認</h1>
+<div id="main">
+	dialogに渡す値: <input type="text" id="dialogArgument1" value="123"><br>
+	<input type="button" id="open-dialog" value="ポップアップを開く"><br>
+	<textarea id="textarea" placeholder="popupしたdialog側からの操作用"></textarea>
+	<pre id="return-value"></pre>
+	<script type="text/javascript">
+		document.getElementById("open-dialog").addEventListener("click", () => {
+			const url = "popup.html";
+			const dialogArguments = {
+				dialogArgument1: document.getElementById("dialogArgument1").value,
+				dialogArgument2: [1,3,5],
+				textarea: document.getElementById("textarea")
+			};
+			const windowStyle = "dialogwidth: 800; dialogheight: 700; resizable: yes";
+			const returnValue = window.showModalDialog(url, dialogArguments, windowStyle);
+			document.getElementById("return-value").innerText = JSON.stringify(returnValue, "", "\t")
+		});
+	</script>
+</div>
+<h2>ソースコード</h2>
+<pre id="code"></pre>
+<script type="text/javascript">
+	document.getElementById("code").innerText = document.getElementById("main").innerHTML.replace(/^\t/mg, "").trim();
+</script>
+</body>
