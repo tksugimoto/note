@@ -14,15 +14,28 @@
 			width: 100%;
 			height: 100px;
 		}
+		.outputs {
+			display:flex;
+		}
+		.outputs .output {
+			padding: 10px;
+			width: 100%;
+		}
 	</style>
 </head>
 <body>
 <h1>クリップボードの中身のhtmlを確認</h1>
 <textarea id="input" placeholder="ここにペースト"></textarea>
-<h2>text</h2>
-<textarea id="output_text"></textarea>
-<h2>html</h2>
-<textarea id="output_html"></textarea>
+<div class="outputs">
+	<div class="output">
+		<h2>text</h2>
+		<textarea id="output_text"></textarea>
+	</div>
+	<div class="output">
+		<h2>html</h2>
+		<textarea id="output_html"></textarea>
+	</div>
+</div>
 <script type="text/javascript">
 document.getElementById("input").addEventListener("paste", evt => {
 	evt.preventDefault();
