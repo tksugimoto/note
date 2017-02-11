@@ -24,6 +24,9 @@
 			width: 100%;
 			height: 400px;
 		}
+		.download-link:not([href]) {
+			display: none;
+		}
 	</style>
 </head>
 <body>
@@ -33,22 +36,33 @@
 	<div class="output">
 		<h2>text</h2>
 		<textarea id="output_text"></textarea>
+		<a class="download-link" download="clipboard.txt" id="download_text">Textをダウンロード</a>
 	</div>
 	<div class="output">
 		<h2>html</h2>
 		<textarea id="output_html"></textarea>
+		<a class="download-link" download="clipboard.html" id="download_html">HTMLをダウンロード</a>
 	</div>
 </div>
 <script type="text/javascript">
+const updateDownloadLink = (id, text) => {
+	const link = document.getElementById(id);
+	const blob = new Blob([text], {
+		type: "text/plain"
+	});
+	link.href = URL.createObjectURL(blob);
+};
 document.getElementById("input").addEventListener("paste", evt => {
 	evt.preventDefault();
 	const clipboardData = evt.clipboardData;
 
 	const text = clipboardData.getData("text/plain");
 	document.getElementById("output_text").innerText = text;
+	updateDownloadLink("download_text", text);
 
 	const html = clipboardData.getData("text/html");
 	document.getElementById("output_html").innerText = html;
+	updateDownloadLink("download_html", html);
 });
 </script>
 </body>
