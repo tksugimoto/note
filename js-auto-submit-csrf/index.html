@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>自動submit(CSRF)テスト</title>
+	</head>
+	<body>
+		<form id="form" method="post"></form>
+		<script>
+			const queries = new URLSearchParams(location.search);
+			if (queries.get('target')) {
+				const target = queries.get('target');
+				console.log(`target: ${target}`);
+				const form = document.getElementById('form');
+				form.action = target;
+				const body = queries.get('body');
+				if (body) {
+					console.log(`body: ${body}`);
+					Object.entries(JSON.parse(body)).forEach(([key, value]) => {
+						const input = document.createElement('input');
+						input.name = key;
+						input.value = value;
+						form.append(input);
+					});
+				}
+				form.submit();
+			}
+		</script>
+	</body>
+</html>
