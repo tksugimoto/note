@@ -28,12 +28,7 @@
 	<a id="output"></a>
 </p>
 <script type="text/javascript">
-const onUpdate = (evt) => {
-	let filePath = evt.target.value;
-	if (filePath.startsWith('"') && filePath.endsWith('"')) {
-		filePath = filePath.slice(1, -1);
-	}
-
+const updateLink = filePath => {
 	let encodedPath = encodeURI(filePath.replace(/\\/g, "/"));
 	if (!encodedPath.startsWith('//')) {
 		encodedPath = "//localhost/" + encodedPath;
@@ -42,6 +37,14 @@ const onUpdate = (evt) => {
 	const link = document.getElementById('output');
 	link.href = `file:${encodedPath}`;
 	link.innerText = filePath;
+};
+
+const onUpdate = (evt) => {
+	let filePath = evt.target.value;
+	if (filePath.startsWith('"') && filePath.endsWith('"')) {
+		filePath = filePath.slice(1, -1);
+	}
+	updateLink(filePath);
 };
 document.getElementById("input").addEventListener("change", onUpdate);
 document.getElementById("input").addEventListener("paste", onUpdate);
