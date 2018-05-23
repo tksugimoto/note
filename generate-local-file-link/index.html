@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>ローカルファイルへのリンクを作成</title>
+	<style>
+		body {
+			width: 700px;
+			margin-right: auto;
+			margin-left: auto;
+		}
+		#input {
+			width: 100%;
+		}
+		a:not([href]) {
+			display: none;
+		}
+	</style>
+</head>
+<body>
+<h1>ローカルファイルへのリンクを作成</h1>
+<p>
+	<label>
+		ファイルパス
+		<input id="input" placeholder="\\example-server\aaa\bbb\ccc.txt">
+	</label>
+</p>
+<p>
+	<a id="output"></a>
+</p>
+<script type="text/javascript">
+const updateLink = filePath => {
+	let encodedPath = encodeURI(filePath.replace(/\\/g, "/"));
+	if (!encodedPath.startsWith('//')) {
+		encodedPath = "//localhost/" + encodedPath;
+	}
+
+	const link = document.getElementById('output');
+	link.href = `file:${encodedPath}`;
+	link.innerText = filePath;
+};
+
+const onUpdate = (evt) => {
+	let filePath = evt.target.value;
+	if (filePath.startsWith('"') && filePath.endsWith('"')) {
+		filePath = filePath.slice(1, -1);
+	}
+	updateLink(filePath);
+	location.hash = filePath;
+};
+document.getElementById("input").addEventListener("change", onUpdate);
+document.getElementById("input").addEventListener("paste", onUpdate);
+document.getElementById("input").addEventListener("keyup", onUpdate);
+
+if (location.hash.length > 1) {
+	const filePath = decodeURI(location.hash.slice(1));
+	document.getElementById("input").value = filePath;
+	updateLink(filePath);
+}
+</script>
+</body>
