@@ -7,30 +7,40 @@
 			width: 700px;
 			margin-right: auto;
 			margin-left: auto;
+			padding: 10px;
+		}
+		.flex {
+			display: flex;
+		}
+		.flex > * {
+			width: 100%;
 		}
 		#input-from-clipboard {
-			vertical-align: middle;
+			width: 100%;
+			height: 3em;
 		}
 		#output[src] {
+			max-width: 100%;
 			border: double 2px gray;
 		}
 	</style>
 </head>
 <body>
 <h1>画像をBase64で共有</h1>
-<p>
-	<label>
-		画像ファイル：
+<div class="flex">
+	<div>
+		<h2>画像ファイルから</h2>
 		<input id="input-from-file" type="file" accept="image/*">
-	</label>
-</p>
-<p>
-	クリップボードから：
-	<textarea id="input-from-clipboard" placeholder="ここにペースト"></textarea>
-</p>
-<p>
+	</div>
+	<div>
+		<h2>クリップボードから</h2>
+		<textarea id="input-from-clipboard" placeholder="ここにペースト"></textarea>
+	</div>
+</div>
+<div>
+	<h2>プレビュー</h2>
 	<img id="output">
-</p>
+</div>
 <script>
 const updateImage = (base64String) => {
 	const image = document.getElementById('output');
