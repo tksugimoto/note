@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>画像をBase64で共有</title>
+	<style>
+		body {
+			width: 700px;
+			margin-right: auto;
+			margin-left: auto;
+		}
+		#output[src] {
+			border: double 2px gray;
+		}
+	</style>
+</head>
+<body>
+<h1>画像をBase64で共有</h1>
+<p>
+	<label>
+		画像ファイル：
+		<input id="input" type="file" accept="image/*">
+	</label>
+</p>
+<p>
+	<img id="output">
+</p>
+<script>
+const updateImage = (base64String) => {
+	const image = document.getElementById('output');
+	image.src = base64String;
+};
+
+const convertToBase64 = file => {
+	return new Promise(resolve => {
+		const fileReader = new FileReader();
+		fileReader.addEventListener('load', evt => {
+			resolve(evt.target.result);
+		});
+		fileReader.readAsDataURL(file);
+	});
+};
+const onChange = evt => {
+	const [file] = evt.target.files;
+	if (!file) return;
+	convertToBase64(file).then(base64String => {
+		updateImage(base64String);
+		location.hash = base64String;
+	});
+};
+document.getElementById("input").addEventListener("change", onChange);
+
+if (location.hash.length > 1) {
+	const base64String = location.hash.slice(1);
+	updateImage(base64String);
+}
+</script>
+</body>
