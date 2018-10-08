@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>画像をBase64で共有</title>
+	<style>
+		body {
+			width: 700px;
+			margin-right: auto;
+			margin-left: auto;
+			padding: 10px;
+		}
+		.flex {
+			display: flex;
+		}
+		.flex > * {
+			width: 100%;
+		}
+		#input-from-clipboard {
+			width: 100%;
+			height: 3em;
+		}
+		#output[src] {
+			max-width: 100%;
+			border: double 2px gray;
+		}
+	</style>
+</head>
+<body>
+<h1>画像をBase64で共有</h1>
+<div class="flex">
+	<div>
+		<h2>画像ファイルから</h2>
+		<input id="input-from-file" type="file" accept="image/*">
+	</div>
+	<div>
+		<h2>クリップボードから</h2>
+		<textarea id="input-from-clipboard" placeholder="ここにペースト"></textarea>
+	</div>
+</div>
+<div>
+	<h2>プレビュー</h2>
+	<img id="output">
+</div>
+<script>
+const updateImage = (base64String) => {
+	const image = document.getElementById('output');
+	image.src = base64String;
+};
+
+const convertToBase64 = file => {
+	return new Promise(resolve => {
+		const fileReader = new FileReader();
+		fileReader.addEventListener('load', evt => {
+			resolve(evt.target.result);
+		});
+		fileReader.readAsDataURL(file);
+	});
+};
+const onChange = evt => {
+	const [file] = evt.target.files;
+	if (!file) return;
+	convertToBase64(file).then(base64String => {
+		updateImage(base64String);
+		location.hash = base64String;
+	});
+};
+const onPaste = evt => {
+	evt.preventDefault();
+	const clipboardData = evt.clipboardData;
+	const [file] = clipboardData.files;
+	if (!file) return;
+	convertToBase64(file).then(base64String => {
+		updateImage(base64String);
+		location.hash = base64String;
+	});
+};
+document.getElementById("input-from-file").addEventListener("change", onChange);
+
+document.getElementById("input-from-clipboard").addEventListener("paste", onPaste);
+
+if (location.hash.length > 1) {
+	const base64String = location.hash.slice(1);
+	updateImage(base64String);
+}
+</script>
+</body>
