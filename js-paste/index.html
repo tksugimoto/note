@@ -32,6 +32,10 @@
 <body>
 <h1>クリップボードの中身のhtmlを確認</h1>
 <textarea id="input" placeholder="ここにペースト"></textarea>
+<div>
+	<h2>types</h2>
+	<ul id="output_types"></ul>
+</div>
 <div class="outputs">
 	<div class="output">
 		<h2>text</h2>
@@ -55,6 +59,15 @@ const updateDownloadLink = (id, text) => {
 document.getElementById("input").addEventListener("paste", evt => {
 	evt.preventDefault();
 	const clipboardData = evt.clipboardData;
+
+	const types = clipboardData.types;
+	const outputTypes = document.getElementById('output_types');
+	outputTypes.innerText = '';
+	types.forEach(type => {
+		const li = document.createElement('li');
+		li.innerText = type;
+		outputTypes.appendChild(li);
+	});
 
 	const text = clipboardData.getData("text/plain");
 	document.getElementById("output_text").innerText = text;
