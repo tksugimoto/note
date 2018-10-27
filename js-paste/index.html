@@ -19,13 +19,13 @@
 			padding: 10px;
 			width: 100%;
 		}
-		#output_text,
-		#output_html {
+		.outputs .output textarea {
 			width: 100%;
 			height: 400px;
 		}
-		.download-link:not([href]) {
-			display: none;
+		.outputs .output img {
+			max-width: 100%;
+			max-height: 400px;
 		}
 	</style>
 </head>
@@ -36,25 +36,59 @@
 	<h2>types</h2>
 	<ul id="output_types"></ul>
 </div>
-<div class="outputs">
-	<div class="output">
-		<h2>text</h2>
-		<textarea id="output_text"></textarea>
-		<a class="download-link" download="clipboard.txt" id="download_text">Textをダウンロード</a>
-	</div>
-	<div class="output">
-		<h2>html</h2>
-		<textarea id="output_html"></textarea>
-		<a class="download-link" download="clipboard.html" id="download_html">HTMLをダウンロード</a>
-	</div>
+<div class="outputs" id="outputs">
 </div>
 <script type="text/javascript">
-const updateDownloadLink = (id, text) => {
-	const link = document.getElementById(id);
-	const blob = new Blob([text], {
-		type: "text/plain"
-	});
-	link.href = URL.createObjectURL(blob);
+const generateOutput = item => {
+	const kind = item.kind;
+	const type = item.type;
+
+	const container = document.createElement('div');
+	container.classList.add('output');
+
+	const header = document.createElement('h2');
+	header.innerText = type;
+	container.appendChild(header);
+
+	if (kind === 'string') {
+		item.getAsString(string => {
+			const textarea = document.createElement('textarea');
+			textarea.innerText = string;
+			container.appendChild(textarea);
+
+			const downloadLink = document.createElement('a');
+			downloadLink.innerText = 'ダウンロード';
+			const blob = new Blob([string], {
+				type: 'text/plain',
+			});
+			downloadLink.href = URL.createObjectURL(blob);
+			const ext = type === 'text/html' ? 'html' : 'txt';
+			downloadLink.download = `clipboard.${ext}`;
+			container.appendChild(downloadLink);
+		});
+	} else if (kind === 'file') {
+		if (type.startsWith('image/')) {
+			const preview = document.createElement('img');
+			container.appendChild(preview);
+
+			const downloadLink = document.createElement('a');
+			downloadLink.innerText = 'ダウンロード';
+			const ext = type.replace('image/', '');
+			downloadLink.download = `clipboard.${ext}`;
+			container.appendChild(downloadLink);
+
+			const reader  = new FileReader();
+			reader.addEventListener('load', () => {
+				const dataURL = reader.result;
+				preview.src = dataURL;
+				downloadLink.href = dataURL;
+			});
+			const file = item.getAsFile();
+			reader.readAsDataURL(file);
+		}
+	}
+
+	return container;
 };
 document.getElementById("input").addEventListener("paste", evt => {
 	evt.preventDefault();
@@ -69,13 +103,13 @@ document.getElementById("input").addEventListener("paste", evt => {
 		outputTypes.appendChild(li);
 	});
 
-	const text = clipboardData.getData("text/plain");
-	document.getElementById("output_text").innerText = text;
-	updateDownloadLink("download_text", text);
+	const outputs = document.getElementById('outputs');
+	outputs.innerText = '';
 
-	const html = clipboardData.getData("text/html");
-	document.getElementById("output_html").innerText = html;
-	updateDownloadLink("download_html", html);
+	const items = clipboardData.items;
+	Array.from(items).forEach(item => {
+		outputs.appendChild(generateOutput(item));
+	});
 });
 </script>
 </body>
