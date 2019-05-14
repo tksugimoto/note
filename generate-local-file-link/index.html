@@ -35,7 +35,7 @@ const updateLink = filePath => {
 	}
 
 	const link = document.getElementById('output');
-	link.href = `file:${encodedPath}`;
+	link.href = `file:${encodedPath}`.replace(/[#]/g, encodeURIComponent);
 	link.innerText = filePath;
 };
 
