@@ -1,0 +1,21 @@
+{
+	"name": "Share Page",
+	"start_url": "index.html",
+	"display": "standalone",
+	"share_target": {
+		"action": "share_target.html",
+		"method": "GET",
+		"enctype": "application/x-www-form-urlencoded",
+		"params": {
+			"title": "title",
+			"text": "text",
+			"url": "url"
+		}
+	},
+	"icons": [{
+		"src": "icons/144.png",
+		"sizes": "144x144",
+		"type": "image/png",
+		"purpose": "any"
+	}]
+}
