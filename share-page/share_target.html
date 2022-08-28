@@ -46,6 +46,14 @@
 		dl.append(dt, dd);
 	});
 
+	const parsedUrl = (() => {
+		try {
+			return new URL(url || text);
+		} catch(e) {
+			return null;
+		}
+	})();
+	const isUrl = Boolean(parsedUrl && parsedUrl.hostname);
 	const shareButtons = document.getElementById('share-buttons');
 	[{
 		name: 'クリップボードにコピー',
@@ -98,6 +106,27 @@
 				q: text.replace(/\n/g, ' '),
 			});
 			window.open(`https://www.google.com/search?${params.toString()}`);
+		},
+	}, {
+		name: '[URL] hostname をコピ－',
+		enabled: isUrl && Boolean(navigator.clipboard),
+		callback: () => {
+			navigator.clipboard.writeText(parsedUrl.hostname);
+		},
+	}, {
+		name: '[URL] pathname をコピ－',
+		enabled: isUrl && Boolean(navigator.clipboard),
+		callback: () => {
+			navigator.clipboard.writeText(parsedUrl.pathname);
+		},
+	}, {
+		name: '[URL] query, hash を削除してコピ－',
+		enabled: isUrl && Boolean(navigator.clipboard),
+		callback: () => {
+			const _url = new URL(parsedUrl);
+			_url.search = '';
+			_url.hash = '';
+			navigator.clipboard.writeText(_url.href);
 		},
 	}].forEach(({name, callback, enabled}) => {
 		if (!enabled) return;
