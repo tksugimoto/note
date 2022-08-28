@@ -49,11 +49,13 @@
 	const shareButtons = document.getElementById('share-buttons');
 	[{
 		name: 'クリップボードにコピー',
+		enabled: Boolean(navigator.clipboard),
 		callback: () => {
 			navigator.clipboard.writeText([title, text, url].filter(Boolean).join('\n'));
 		},
 	}, {
 		name: '別アプリに共有',
+		enabled: Boolean(navigator.share),
 		callback: () => {
 			navigator.share({
 				text: [title, text, url].filter(Boolean).join('\n'),
@@ -61,6 +63,7 @@
 		},
 	}, {
 		name: 'Twitterで共有',
+		enabled: true,
 		callback: () => {
 			const params = new URLSearchParams({
 				text: [title, text, url].filter(Boolean).join('\n'),
@@ -69,6 +72,7 @@
 		},
 	}, {
 		name: 'Google カレンダーに登録',
+		enabled: true,
 		callback: () => {
 			const params = new URLSearchParams({
 				action: 'TEMPLATE',
@@ -79,6 +83,7 @@
 		},
 	}, {
 		name: 'タイトル で Google検索',
+		enabled: Boolean(title),
 		callback: () => {
 			const params = new URLSearchParams({
 				q: title,
@@ -87,13 +92,15 @@
 		},
 	}, {
 		name: 'テキスト で Google検索',
+		enabled: Boolean(text),
 		callback: () => {
 			const params = new URLSearchParams({
 				q: text.replace(/\n/g, ' '),
 			});
 			window.open(`https://www.google.com/search?${params.toString()}`);
 		},
-	}].forEach(({name, callback}) => {
+	}].forEach(({name, callback, enabled}) => {
+		if (!enabled) return;
 		const li = document.createElement('li');
 		const button = document.createElement('button');
 		button.innerText = name;
