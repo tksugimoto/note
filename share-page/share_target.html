@@ -85,6 +85,14 @@
 			});
 			window.open(`https://www.google.com/search?${params.toString()}`);
 		},
+	}, {
+		name: 'テキスト で Google検索',
+		callback: () => {
+			const params = new URLSearchParams({
+				q: text.replace(/\n/g, ' '),
+			});
+			window.open(`https://www.google.com/search?${params.toString()}`);
+		},
 	}].forEach(({name, callback}) => {
 		const li = document.createElement('li');
 		const button = document.createElement('button');
