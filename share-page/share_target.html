@@ -18,12 +18,24 @@
 			cursor: pointer;
 			padding: 10px;
 		}
+		.hide-content .content {
+			display: none;
+		}
+		label,
+		input[type="checkbox"] {
+			cursor: pointer;
+		}
 	</style>
 </head>
 <body>
 <h2>Share Page</h2>
 <dl id="dl"></dl>
 <ul id="share-buttons"></ul>
+<h3>Settings</h3>
+<label>
+	<input type="checkbox" id="hide-content">
+	内容を非表示にする
+</label>
 <script>
 {
 	const searchParams = new URL(document.URL).searchParams;
@@ -145,11 +157,29 @@
 		li.append(button);
 		if (content) {
 			const pre = document.createElement('pre');
+			pre.classList.add('content');
 			pre.innerText = content;
 			li.append(pre);
 		}
 		shareButtons.append(li);
 	});
+
+	{
+		const checkBox = document.getElementById('hide-content');
+		const settingKey = `${location.pathname} hide-content`;
+		if (localStorage[settingKey] === 'true') { // default: 隠さない
+			shareButtons.classList.add('hide-content');
+			checkBox.checked = true;
+		}
+		checkBox.addEventListener('change', event => {
+			localStorage[settingKey] = event.target.checked;
+			if (event.target.checked) {
+				shareButtons.classList.add('hide-content');
+			} else {
+				shareButtons.classList.remove('hide-content');
+			}
+		});
+	}
 }
 </script>
 </body>
