@@ -6,6 +6,7 @@ const urlsToCache = [
 	'./',
 	'./index.html',
 	'./share_target.html',
+	'https://tksugimoto.github.io/my-web-components/check-box/check-box.js',
 ];
 
 self.addEventListener('install', event => {

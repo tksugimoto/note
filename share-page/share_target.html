@@ -21,21 +21,17 @@
 		.hide-content .content {
 			display: none;
 		}
-		label,
-		input[type="checkbox"] {
-			cursor: pointer;
-		}
 	</style>
+	<script type="module" src="https://tksugimoto.github.io/my-web-components/check-box/check-box.js"></script>
 </head>
 <body>
 <h2>Share Page</h2>
 <dl id="dl"></dl>
 <ul id="share-buttons"></ul>
 <h3>Settings</h3>
-<label>
-	<input type="checkbox" id="hide-content">
+<check-box id="hide-content">
 	内容を非表示にする
-</label>
+</check-box>
 <script>
 {
 	const searchParams = new URL(document.URL).searchParams;
@@ -169,7 +165,9 @@
 		const settingKey = `${location.pathname} hide-content`;
 		if (localStorage[settingKey] === 'true') { // default: 隠さない
 			shareButtons.classList.add('hide-content');
-			checkBox.checked = true;
+			window.customElements.whenDefined('check-box').then(() => {
+				checkBox.checked = true;
+			});
 		}
 		checkBox.addEventListener('change', event => {
 			localStorage[settingKey] = event.target.checked;
