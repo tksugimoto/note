@@ -1,4 +1,4 @@
-const CACHE_VERSION = '2022/08/11-17:20';
+const CACHE_VERSION = '2022/09/19-17:30';
 const CACHE_NAME_SEPARATOR = ' '; // path 中の 半角スペース は url encode されるため混同される可能性がない
 const CACHE_NAME = `${self.registration.scope}${CACHE_NAME_SEPARATOR}${CACHE_VERSION}`;
 
@@ -6,6 +6,7 @@ const urlsToCache = [
 	'./',
 	'./index.html',
 	'./share_target.html',
+	'https://tksugimoto.github.io/my-web-components/check-box/check-box.js',
 ];
 
 self.addEventListener('install', event => {

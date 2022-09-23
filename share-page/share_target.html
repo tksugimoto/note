@@ -11,16 +11,27 @@
 		li {
 			padding: 10px 0;
 		}
+		dd {
+			white-space: pre;
+		}
 		button {
 			cursor: pointer;
 			padding: 10px;
 		}
+		.hide-content .content {
+			display: none;
+		}
 	</style>
+	<script type="module" src="https://tksugimoto.github.io/my-web-components/check-box/check-box.js"></script>
 </head>
 <body>
 <h2>Share Page</h2>
 <dl id="dl"></dl>
 <ul id="share-buttons"></ul>
+<h3>Settings</h3>
+<check-box id="hide-content">
+	内容を非表示にする
+</check-box>
 <script>
 {
 	const searchParams = new URL(document.URL).searchParams;
@@ -43,14 +54,26 @@
 		dl.append(dt, dd);
 	});
 
+	const parsedUrl = (() => {
+		try {
+			return new URL(url || text);
+		} catch(e) {
+			return null;
+		}
+	})();
+	const isUrl = Boolean(parsedUrl && parsedUrl.hostname);
 	const shareButtons = document.getElementById('share-buttons');
 	[{
 		name: 'クリップボードにコピー',
+		enabled: Boolean(navigator.clipboard),
+		content: [title, text, url].filter(Boolean).join('\n'),
 		callback: () => {
 			navigator.clipboard.writeText([title, text, url].filter(Boolean).join('\n'));
 		},
 	}, {
 		name: '別アプリに共有',
+		enabled: Boolean(navigator.share),
+		content: [title, text, url].filter(Boolean).join('\n'),
 		callback: () => {
 			navigator.share({
 				text: [title, text, url].filter(Boolean).join('\n'),
@@ -58,6 +81,8 @@
 		},
 	}, {
 		name: 'Twitterで共有',
+		enabled: true,
+		content: [title, text, url].filter(Boolean).join('\n'),
 		callback: () => {
 			const params = new URLSearchParams({
 				text: [title, text, url].filter(Boolean).join('\n'),
@@ -66,6 +91,7 @@
 		},
 	}, {
 		name: 'Google カレンダーに登録',
+		enabled: true,
 		callback: () => {
 			const params = new URLSearchParams({
 				action: 'TEMPLATE',
@@ -76,20 +102,82 @@
 		},
 	}, {
 		name: 'タイトル で Google検索',
+		enabled: Boolean(title),
+		content: title,
 		callback: () => {
 			const params = new URLSearchParams({
 				q: title,
 			});
 			window.open(`https://www.google.com/search?${params.toString()}`);
 		},
-	}].forEach(({name, callback}) => {
+	}, {
+		name: 'テキスト で Google検索',
+		enabled: Boolean(text),
+		content: text.replace(/\n/g, ' '),
+		callback: () => {
+			const params = new URLSearchParams({
+				q: text.replace(/\n/g, ' '),
+			});
+			window.open(`https://www.google.com/search?${params.toString()}`);
+		},
+	}, {
+		name: '[URL] hostname をコピ－',
+		enabled: isUrl && Boolean(navigator.clipboard),
+		content: parsedUrl && parsedUrl.hostname,
+		callback: () => {
+			navigator.clipboard.writeText(parsedUrl.hostname);
+		},
+	}, {
+		name: '[URL] pathname をコピ－',
+		enabled: isUrl && Boolean(navigator.clipboard),
+		content: parsedUrl && parsedUrl.pathname,
+		callback: () => {
+			navigator.clipboard.writeText(parsedUrl.pathname);
+		},
+	}, {
+		name: '[URL] query, hash を削除してコピ－',
+		enabled: isUrl && Boolean(navigator.clipboard),
+		content: parsedUrl && `${parsedUrl.origin}${parsedUrl.pathname}`,
+		callback: () => {
+			const _url = new URL(parsedUrl);
+			_url.search = '';
+			_url.hash = '';
+			navigator.clipboard.writeText(_url.href);
+		},
+	}].forEach(({name, callback, enabled, content}) => {
+		if (!enabled) return;
 		const li = document.createElement('li');
 		const button = document.createElement('button');
 		button.innerText = name;
 		button.addEventListener('click', callback);
 		li.append(button);
+		if (content) {
+			const pre = document.createElement('pre');
+			pre.classList.add('content');
+			pre.innerText = content;
+			li.append(pre);
+		}
 		shareButtons.append(li);
 	});
+
+	{
+		const checkBox = document.getElementById('hide-content');
+		const settingKey = `${location.pathname} hide-content`;
+		if (localStorage[settingKey] === 'true') { // default: 隠さない
+			shareButtons.classList.add('hide-content');
+			window.customElements.whenDefined('check-box').then(() => {
+				checkBox.checked = true;
+			});
+		}
+		checkBox.addEventListener('change', event => {
+			localStorage[settingKey] = event.target.checked;
+			if (event.target.checked) {
+				shareButtons.classList.add('hide-content');
+			} else {
+				shareButtons.classList.remove('hide-content');
+			}
+		});
+	}
 }
 </script>
 </body>
