@@ -54,6 +54,17 @@
 		dl.append(dt, dd);
 	});
 
+	{
+		const originalOpen = window.open;
+		window.open = _url => {
+			if (localStorage['ProtocolHandler-registered-web+redirect'] === 'true') {
+				originalOpen(`web+redirect:${_url}`);
+			} else {
+				originalOpen(_url);
+			}
+		};
+	}
+
 	const parsedUrl = (() => {
 		try {
 			return new URL(url || text);
