@@ -61,7 +61,7 @@
 			return null;
 		}
 	})();
-	const isUrl = Boolean(parsedUrl && parsedUrl.hostname);
+	const isUrl = Boolean(parsedUrl?.hostname);
 	const shareButtons = document.getElementById('share-buttons');
 	[{
 		name: 'クリップボードにコピー',
@@ -113,7 +113,7 @@
 	}, {
 		name: 'テキスト で Google検索',
 		enabled: Boolean(text),
-		content: text && text.replace(/\n/g, ' '),
+		content: text?.replace(/\n/g, ' '),
 		callback: () => {
 			const params = new URLSearchParams({
 				q: text.replace(/\n/g, ' '),
@@ -123,14 +123,14 @@
 	}, {
 		name: '[URL] hostname をコピ－',
 		enabled: isUrl && Boolean(navigator.clipboard),
-		content: parsedUrl && parsedUrl.hostname,
+		content: parsedUrl?.hostname,
 		callback: () => {
 			navigator.clipboard.writeText(parsedUrl.hostname);
 		},
 	}, {
 		name: '[URL] pathname をコピ－',
 		enabled: isUrl && Boolean(navigator.clipboard),
-		content: parsedUrl && parsedUrl.pathname,
+		content: parsedUrl?.pathname,
 		callback: () => {
 			navigator.clipboard.writeText(parsedUrl.pathname);
 		},
