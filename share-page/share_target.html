@@ -113,7 +113,7 @@
 	}, {
 		name: 'テキスト で Google検索',
 		enabled: Boolean(text),
-		content: text.replace(/\n/g, ' '),
+		content: text && text.replace(/\n/g, ' '),
 		callback: () => {
 			const params = new URLSearchParams({
 				q: text.replace(/\n/g, ' '),
