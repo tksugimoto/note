@@ -35,9 +35,9 @@
 <script>
 {
 	const searchParams = new URL(document.URL).searchParams;
-	const title = searchParams.get('title');
-	const text = searchParams.get('text');
-	const url = searchParams.get('url');
+	const title = searchParams.get('title') || '';
+	const text = searchParams.get('text') || '';
+	const url = searchParams.get('url') || '';
 
 	document.title += `: ${title || text}`;
 
