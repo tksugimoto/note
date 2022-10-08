@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<title>Redirect</title>
+	<style>
+		input[type="button"] {
+			cursor: pointer;
+			padding: 10px;
+		}
+	</style>
+</head>
+<body>
+<h1>aaaaa</h1>
+
+<h2>登録</h2>
+<input type="button" value="登録" id="register">
+<input type="button" value="解除" id="unregister">
+<script>
+	document.getElementById('register').addEventListener('click', () => {
+		navigator.registerProtocolHandler('web+redirect', './redirect.html?to=%s', '');
+		localStorage['ProtocolHandler-registered-web+redirect'] = true;
+	});
+	document.getElementById('unregister').addEventListener('click', () => {
+		navigator.unregisterProtocolHandler('web+redirect', './redirect.html?to=%s');
+		localStorage['ProtocolHandler-registered-web+redirect'] = false;
+	});
+</script>
+
+
+
+<h2>テスト</h2>
+<ul>
+	<li>
+		<a href="web+redirect:https://example.com/abc/123?x=42&y=9#foo">web+redirect:https://example.com/abc/123?x=42&y=9#foo</a>
+	</li>
+	<li>
+		<input type="button" value="open: web+redirect:https://example.com/abc/123?x=42&y=9#foo" id="open">
+		<script>
+			document.getElementById('open').addEventListener('click', () => {
+				window.open('web+redirect:https://example.com/abc/123?x=42&y=9#foo');
+			});
+		</script>
+	</li>
+</ul>
+
+<h2>参考</h2>
+<ul>
+	<li><a href="https://developer.mozilla.org/ja/docs/Web/API/Navigator/registerProtocolHandler/Web-based_protocol_handlers">ウェブベースのプロトコルハンドラー - Web API | MDN</a></li>
+	<li><a href="https://developer.mozilla.org/ja/docs/Web/API/Navigator/registerProtocolHandler">Navigator.registerProtocolHandler() - Web API | MDN</a></li>
+</ul>
+</body>

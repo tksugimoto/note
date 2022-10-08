@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<title>Redirect</title>
+</head>
+<body>
+<h1>リダイレクト</h1>
+<pre></pre>
+<script>
+	const to = new URL(document.URL).searchParams.get('to');
+	const url = to.slice('web+redirect:'.length);
+	document.querySelector('pre').innerText = `${to}\n${url}`;
+</script>
+</body>
