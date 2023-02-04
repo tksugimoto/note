@@ -12,6 +12,9 @@
 			height: 1em;
 			vertical-align: middle;
 		}
+		button {
+			cursor: pointer;
+		}
 	</style>
 </head>
 <body>
@@ -39,4 +42,23 @@
 	<li>(事前準備) このPWAをインストール (Android & Chrome で動作確認済み)</li>
 	<li>共有からこのアプリ (<code>Share Page</code> <img class="icon" src="./icons/144.png">) を選択</li>
 </ol>
+
+<div style="display: none;" id="share-this-page-container">
+	<h2>このアプリを共有</h2>
+	<script>
+	if (navigator.share) {
+		const container = document.getElementById('share-this-page-container');
+		container.style.display = '';
+		const button = document.createElement('button');
+		button.innerText = '共有する';
+		button.addEventListener('click', () => {
+			navigator.share({
+			text: document.title,
+			url: location.href,
+		});
+		});
+		container.append(button);
+	}
+	</script>
+</div>
 </body>
