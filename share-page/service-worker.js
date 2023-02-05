@@ -1,4 +1,4 @@
-const CACHE_VERSION = '2022/10/06-14:10';
+const CACHE_VERSION = '2023/02/05-16:45';
 const CACHE_NAME_SEPARATOR = ' '; // path 中の 半角スペース は url encode されるため混同される可能性がない
 const CACHE_NAME = `${self.registration.scope}${CACHE_NAME_SEPARATOR}${CACHE_VERSION}`;
 
