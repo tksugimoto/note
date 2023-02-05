@@ -9,9 +9,15 @@ const urlsToCache = [
 	'https://tksugimoto.github.io/my-web-components/check-box/check-box.js',
 ];
 
+const toNoCacheRequest = url => {
+	return new Request(url, {
+		cache: 'no-cache',
+	});
+};
+
 self.addEventListener('install', event => {
 	const promise = Promise.all([
-		caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache)),
+		caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache.map(toNoCacheRequest))),
 		self.skipWaiting(),
 	]);
 	event.waitUntil(promise);
