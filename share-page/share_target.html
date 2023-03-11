@@ -39,9 +39,11 @@
 <h3>Settings</h3>
 <ul class="setting-list">
 	<li><check-box id="hide-content">内容を非表示にする</check-box></li>
+	<li><check-box id="auto-close">選択時に自動で閉じる</check-box></li>
 </ul>
 <script>
 {
+	let autoClose = false;
 	const searchParams = new URL(document.URL).searchParams;
 	const title = searchParams.get('title') || '';
 	const text = searchParams.get('text') || '';
@@ -76,14 +78,14 @@
 		enabled: Boolean(navigator.clipboard),
 		content: [title, text, url].filter(Boolean).join('\n'),
 		callback: () => {
-			navigator.clipboard.writeText([title, text, url].filter(Boolean).join('\n'));
+			return navigator.clipboard.writeText([title, text, url].filter(Boolean).join('\n'));
 		},
 	}, {
 		name: '別アプリに共有',
 		enabled: Boolean(navigator.share),
 		content: [title, text, url].filter(Boolean).join('\n'),
 		callback: () => {
-			navigator.share({
+			return navigator.share({
 				text: [title, text, url].filter(Boolean).join('\n'),
 			});
 		},
@@ -133,14 +135,14 @@
 		enabled: isUrl && Boolean(navigator.clipboard),
 		content: parsedUrl?.hostname,
 		callback: () => {
-			navigator.clipboard.writeText(parsedUrl.hostname);
+			return navigator.clipboard.writeText(parsedUrl.hostname);
 		},
 	}, {
 		name: '[URL] pathname をコピ－',
 		enabled: isUrl && Boolean(navigator.clipboard),
 		content: parsedUrl?.pathname,
 		callback: () => {
-			navigator.clipboard.writeText(parsedUrl.pathname);
+			return navigator.clipboard.writeText(parsedUrl.pathname);
 		},
 	}, {
 		name: '[URL] query, hash を削除してコピ－',
@@ -150,14 +152,20 @@
 			const _url = new URL(parsedUrl);
 			_url.search = '';
 			_url.hash = '';
-			navigator.clipboard.writeText(_url.href);
+			return navigator.clipboard.writeText(_url.href);
 		},
 	}].forEach(({name, callback, enabled, content}) => {
 		if (!enabled) return;
 		const li = document.createElement('li');
 		const button = document.createElement('button');
 		button.innerText = name;
-		button.addEventListener('click', callback);
+		button.addEventListener('click', () => {
+			const result = callback();
+			if (autoClose) {
+				if (result instanceof Promise) result.then(() => window.close());
+				else window.close();
+			}
+		});
 		li.append(button);
 		if (content) {
 			const pre = document.createElement('pre');
@@ -184,6 +192,21 @@
 			} else {
 				shareButtons.classList.remove('hide-content');
 			}
+		});
+	}
+
+	{
+		const checkBox = document.getElementById('auto-close');
+		const settingKey = `${location.pathname} auto-close`;
+		autoClose = localStorage[settingKey] === 'true'; // default: 自動で閉じない
+		if (autoClose) {
+			window.customElements.whenDefined('check-box').then(() => {
+				checkBox.checked = true;
+			});
+		}
+		checkBox.addEventListener('change', event => {
+			autoClose = event.target.checked;
+			localStorage[settingKey] = event.target.checked;
 		});
 	}
 }
