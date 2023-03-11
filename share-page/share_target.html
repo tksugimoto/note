@@ -21,6 +21,14 @@
 		.hide-content .content {
 			display: none;
 		}
+		.setting-list {
+			list-style: none;
+			padding-inline-start: 0;
+			margin-block: 0;
+		}
+		.setting-list li {
+			padding: 0;
+		}
 	</style>
 	<script type="module" src="https://tksugimoto.github.io/my-web-components/check-box/check-box.js"></script>
 </head>
@@ -29,9 +37,9 @@
 <dl id="dl"></dl>
 <ul id="share-buttons"></ul>
 <h3>Settings</h3>
-<check-box id="hide-content">
-	内容を非表示にする
-</check-box>
+<ul class="setting-list">
+	<li><check-box id="hide-content">内容を非表示にする</check-box></li>
+</ul>
 <script>
 {
 	const searchParams = new URL(document.URL).searchParams;
