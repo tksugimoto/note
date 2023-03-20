@@ -4,6 +4,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="icon" href="./icons/144.png">
+	<link rel="manifest" href="./manifest.json">
 	<title>Handle Clipboard App</title>
 	<script src="./js/install-service-worker.js"></script>
 	<style>
@@ -35,7 +36,7 @@
 	<script type="module" src="https://tksugimoto.github.io/my-web-components/check-box/check-box.js"></script>
 </head>
 <body>
-<h1>クリップボードの中身を便利に処理するツール</h1>
+<h1>クリップボードの中身を便利に処理するツール(Progressive web apps, PWA)</h1>
 
 <h2>できること</h2>
 クリップボードに入っているテキストで
@@ -46,6 +47,7 @@
 
 <h2>使い方</h2>
 <ol>
+	<li>(事前準備) このPWAをインストール (Android & Chrome で動作確認済み)</li>
 	<li>クリップボードに何か（テキスト）をコピーする</li>
 	<li>このアプリを開く</li>
 	<li>「クリップボードを読み取る」をクリック</li>
