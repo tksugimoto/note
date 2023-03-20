@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" href="./icons/144.png">
+	<title>Handle Clipboard App</title>
+	<style>
+		button {
+			cursor: pointer;
+		}
+		#action-buttons li {
+			padding: 10px 0;
+		}
+		#action-buttons button {
+			padding: 10px;
+		}
+		#text {
+			border: 2px solid gray;
+			padding: 5px;
+		}
+		.hide-content #text {
+			display: none;
+		}
+		.setting-list {
+			list-style: none;
+			padding-inline-start: 0;
+			margin-block: 0;
+		}
+		.setting-list li {
+			padding: 0;
+		}
+	</style>
+	<script type="module" src="https://tksugimoto.github.io/my-web-components/check-box/check-box.js"></script>
+</head>
+<body>
+<h1>クリップボードの中身を便利に処理するツール</h1>
+
+<h2>できること</h2>
+クリップボードに入っているテキストで
+<ul>
+	<li>Twitterで検索</li>
+	<li>Google検索</li>
+</ul>
+
+<h2>使い方</h2>
+<ol>
+	<li>クリップボードに何か（テキスト）をコピーする</li>
+	<li>このアプリを開く</li>
+	<li>「クリップボードを読み取る」をクリック</li>
+</ol>
+
+<h2>Handle Clipboard</h2>
+<button id="read-clipboard">クリップボードを読み取る</button>
+<pre id="text" style="display: none;"></pre>
+<ul id="action-buttons"></ul>
+<h3>Settings</h3>
+<ul class="setting-list">
+	<li><check-box id="auto-read-clipboard">自動的にクリップボードを読み取る</check-box></li>
+	<li><check-box id="hide-content">内容を非表示にする</check-box></li>
+	<li><check-box id="auto-close">選択時に自動で閉じる</check-box></li>
+</ul>
+<script>
+{
+	let autoClose = false;
+
+	const originalTitle = document.title;
+	const onClipboardRead = clipboardText => {
+		document.title = `${originalTitle}: ${clipboardText}`;
+		const textElement = document.getElementById('text');
+		textElement.innerText = clipboardText;
+		textElement.style.display = '';
+
+		const actionButtons = document.getElementById('action-buttons');
+		actionButtons.innerText = '';
+		[{
+			name: 'Twitterで検索',
+			callback: () => {
+				const params = new URLSearchParams({
+					q: clipboardText.replace(/\n/g, ' '),
+				});
+				window.open(`https://twitter.com/search?${params.toString()}`);
+			},
+		}, {
+			name: 'Google検索',
+			callback: () => {
+				const params = new URLSearchParams({
+					q: clipboardText.replace(/\n/g, ' '),
+				});
+				window.open(`https://www.google.com/search?${params.toString()}`);
+			},
+		}].forEach(({name, callback}) => {
+			const li = document.createElement('li');
+			const button = document.createElement('button');
+			button.innerText = name;
+			button.addEventListener('click', () => {
+				const result = callback();
+				if (autoClose) {
+					if (result instanceof Promise) result.then(() => window.close());
+					else window.close();
+				}
+			});
+			li.append(button);
+			actionButtons.append(li);
+		});
+	};
+
+	document.getElementById('read-clipboard').addEventListener('click', () => {
+		navigator.clipboard.readText().then(onClipboardRead);
+	});
+
+	{
+		const checkBox = document.getElementById('auto-read-clipboard');
+		const settingKey = `${location.pathname} auto-read-clipboard`;
+		if (localStorage[settingKey] === 'true') { // default: 自動読み取りoff
+			navigator.clipboard.readText().then(onClipboardRead);
+			checkBox.setAttribute('checked', '');
+		}
+		checkBox.addEventListener('change', event => {
+			const checked = event.target.checked;
+			localStorage[settingKey] = checked;
+			if (checked) {
+				navigator.permissions.query({
+					name: 'clipboard-read',
+					allowWithoutGesture: true,
+				}).then(result => {
+					if (result.state === 'prompt') {
+						// 事前に権限を要求しておく
+						navigator.clipboard.readText();
+					}
+				});
+			}
+		});
+		const originalCheckboxText = checkBox.innerText;
+		const onStateChange = state => {
+			if (state === 'denied') {
+				checkBox.setAttribute('disabled', '');
+				checkBox.append('※ クリップボードの読み取りを許可してください');
+			} else { // granted, prompt
+				checkBox.removeAttribute('disabled');
+				checkBox.innerText = originalCheckboxText;
+			}
+		};
+		navigator.permissions.query({
+			name: 'clipboard-read',
+			allowWithoutGesture: true,
+		}).then(result => {
+			onStateChange(result.state);
+			result.onchange = () => {
+				onStateChange(result.state);
+			};
+		});
+	}
+
+	{
+		const checkBox = document.getElementById('hide-content');
+		const settingKey = `${location.pathname} hide-content`;
+		if (localStorage[settingKey] === 'true') { // default: 隠さない
+			document.body.classList.add('hide-content');
+			checkBox.setAttribute('checked', '');
+		}
+		checkBox.addEventListener('change', event => {
+			localStorage[settingKey] = event.target.checked;
+			if (event.target.checked) {
+				document.body.classList.add('hide-content');
+			} else {
+				document.body.classList.remove('hide-content');
+			}
+		});
+	}
+
+	{
+		const checkBox = document.getElementById('auto-close');
+		const settingKey = `${location.pathname} auto-close`;
+		autoClose = localStorage[settingKey] === 'true'; // default: 自動で閉じない
+		if (autoClose) {
+			checkBox.setAttribute('checked', '');
+		}
+		checkBox.addEventListener('change', event => {
+			autoClose = event.target.checked;
+			localStorage[settingKey] = event.target.checked;
+		});
+	}
+}
+</script>
+
+<div style="display: none;" id="share-this-page-container">
+	<h2>このアプリを共有</h2>
+	<script>
+	if (navigator.share) {
+		const originalTitle = document.title;
+		const container = document.getElementById('share-this-page-container');
+		container.style.display = '';
+		const button = document.createElement('button');
+		button.innerText = '共有する';
+		button.addEventListener('click', () => {
+			navigator.share({
+				text: originalTitle,
+				url: location.href,
+			});
+		});
+		container.append(button);
+	}
+	</script>
+</div>
+</body>
