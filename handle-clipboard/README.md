@@ -1,4 +1,4 @@
-# クリップボードの中身を便利に処理するツール
+# クリップボードの中身を便利に処理するツール(Progressive web apps, PWA)
 https://tksugimoto.github.io/note/handle-clipboard/
 
 ## アイコン
