@@ -65,6 +65,8 @@
 	<li><check-box id="auto-read-clipboard">自動的にクリップボードを読み取る</check-box></li>
 	<li><check-box id="hide-content">内容を非表示にする</check-box></li>
 	<li><check-box id="auto-close">選択時に自動で閉じる</check-box></li>
+	<li><check-box id="always-show-notification">通知から開けるようにする(常時表示)</check-box></li>
+	<li><check-box id="silent-notification">サイレント通知</check-box></li>
 </ul>
 <script>
 {
@@ -201,6 +203,87 @@
 			autoClose.save(event.target.checked);
 		});
 	}
+
+	const alwaysShowNotificationSetting = new BooleanSetting('always-show-notification');
+	const silentNotificationSetting = new BooleanSetting('silent-notification');
+
+	const postMessage = message => {
+		navigator.serviceWorker.ready.then(registration => {
+			registration.active.postMessage(message);
+		});
+	};
+	const notify = () => {
+		postMessage({
+			method: 'start-notification',
+			silent: silentNotificationSetting.current,
+		});
+	};
+	if (new URL(document.URL).searchParams.get('from') === 'notification') {
+		notify();
+	}
+
+	{
+		const checkBox = document.getElementById('always-show-notification');
+		if (alwaysShowNotificationSetting.current) {
+			checkBox.setAttribute('checked', '');
+		}
+		if (Notification.permission !== 'granted') {
+			checkBox.removeAttribute('checked');
+			alwaysShowNotificationSetting.save(false);
+		}
+		checkBox.addEventListener('change', event => {
+			alwaysShowNotificationSetting.save(event.target.checked);
+			if (event.target.checked) {
+				switch (Notification.permission) {
+					case 'granted':
+						notify();
+						break;
+					case 'default':
+						Notification.requestPermission().then(result => {
+							if (result === 'granted') notify();
+						});
+						break;
+				}
+			} else {
+				postMessage({
+					method: 'stop-notification',
+				});
+			}
+		});
+		const originalCheckboxText = checkBox.innerText;
+		const onStateChange = state => {
+			if (state === 'denied') {
+				checkBox.setAttribute('disabled', '');
+				checkBox.append('※ 通知を許可してください');
+			} else { // granted, prompt
+				checkBox.removeAttribute('disabled');
+				checkBox.innerText = originalCheckboxText;
+			}
+		};
+		navigator.permissions.query({
+			name: 'notifications',
+		}).then(result => {
+			onStateChange(result.state);
+			result.onchange = () => {
+				onStateChange(result.state);
+			};
+		});
+	}
+
+	{
+		const checkBox = document.getElementById('silent-notification');
+		if (silentNotificationSetting.current) {
+			checkBox.setAttribute('checked', '');
+		}
+		checkBox.addEventListener('change', event => {
+			silentNotificationSetting.save(event.target.checked);
+			if (Notification.permission === 'granted'
+				&& localStorage[`${location.pathname} always-show-notification`] === 'true'
+			) {
+				notify(); // to update silent option
+			}
+		});
+	}
 }
 </script>
 
@@ -216,7 +299,7 @@
 		button.addEventListener('click', () => {
 			navigator.share({
 				text: originalTitle,
-				url: location.href,
+				url: `${location.origin}${location.pathname}`, // 通知から開いた場合に付与される query を除去
 			});
 		});
 		container.append(button);
