@@ -1,4 +1,4 @@
-const CACHE_VERSION = '2023/03/20-19:05';
+const CACHE_VERSION = '2023/04/12-17:50';
 const CACHE_NAME_SEPARATOR = ' '; // path 中の 半角スペース は url encode されるため混同される可能性がない
 const CACHE_NAME = `${self.registration.scope}${CACHE_NAME_SEPARATOR}${CACHE_VERSION}`;
 
@@ -55,4 +55,44 @@ self.addEventListener('fetch', event => {
 		});
 	});
 	event.respondWith(responsePromise);
+});
+
+const showNotification = ({
+	silent,
+}) => {
+	const title = 'Handle Clipboard';
+	return self.registration.showNotification(title, {
+		body: 'Open',
+		icon: './icons/144.png',
+		silent,
+		tag: 'open',
+	});
+};
+
+self.addEventListener('message', event => {
+	if (event.data.method === 'start-notification') {
+		event.waitUntil(showNotification({
+			silent: event.data.silent,
+		}));
+	} else if (event.data.method === 'stop-notification') {
+		const promise = self.registration.getNotifications().then(notifications => {
+			notifications.forEach(n => n.close());
+		});
+		event.waitUntil(promise);
+	}
+});
+
+self.addEventListener('notificationclick', (event) => {
+	if (event.notification.tag === 'open') {
+		event.waitUntil(self.clients.openWindow('./?from=notification'));
+	}
+});
+
+// Android Chrome: 動作確認済み
+// Windows Chrome: デフォルトだと未発火 ( chrome://flags/#enable-system-notifications を disabled にすれば発火する )
+self.addEventListener('notificationclose', (event) => {
+	// event.waitUntil を使うと無限に通知を出せない
+	showNotification({
+		silent: event.notification.silent,
+	});
 });

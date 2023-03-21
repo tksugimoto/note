@@ -62,6 +62,8 @@
 	<li><check-box id="auto-read-clipboard">自動的にクリップボードを読み取る</check-box></li>
 	<li><check-box id="hide-content">内容を非表示にする</check-box></li>
 	<li><check-box id="auto-close">選択時に自動で閉じる</check-box></li>
+	<li><check-box id="always-show-notification">通知から開けるようにする(常時表示)</check-box></li>
+	<li><check-box id="silent-notification">サイレント通知</check-box></li>
 </ul>
 <script>
 {
@@ -185,7 +187,90 @@
 		});
 	}
 }
+
+{
+	const postMessage = message => {
+		navigator.serviceWorker.ready.then(registration => {
+			registration.active.postMessage(message);
+		});
+	};
+	const notify = () => {
+		postMessage({
+			method: 'start-notification',
+			silent: localStorage[`${location.pathname} silent-notification`] === 'true',
+		});
+	};
+	if (new URL(document.URL).searchParams.get('from') === 'notification') {
+		notify();
+	}
+
+	{
+		const checkBox = document.getElementById('always-show-notification');
+		const settingKey = `${location.pathname} always-show-notification`;
+		if (localStorage[settingKey] === 'true') {
+			checkBox.setAttribute('checked', '');
+		}
+		if (Notification.permission !== 'granted') {
+			checkBox.removeAttribute('checked');
+			localStorage[settingKey] = false;
+		}
+		checkBox.addEventListener('change', event => {
+			localStorage[settingKey] = event.target.checked;
+			if (event.target.checked) {
+				switch (Notification.permission) {
+					case 'granted':
+						notify();
+						break;
+					case 'default':
+						Notification.requestPermission().then(result => {
+							if (result === 'granted') notify();
+						});
+						break;
+				}
+			} else {
+				postMessage({
+					method: 'stop-notification',
+				});
+			}
+		});
+		const originalCheckboxText = checkBox.innerText;
+		const onStateChange = state => {
+			if (state === 'denied') {
+				checkBox.setAttribute('disabled', '');
+				checkBox.append('※ 通知を許可してください');
+			} else { // granted, prompt
+				checkBox.removeAttribute('disabled');
+				checkBox.innerText = originalCheckboxText;
+			}
+		};
+		navigator.permissions.query({
+			name: 'notifications',
+		}).then(result => {
+			onStateChange(result.state);
+			result.onchange = () => {
+				onStateChange(result.state);
+			};
+		});
+	}
+
+	{
+		const checkBox = document.getElementById('silent-notification');
+		const settingKey = `${location.pathname} silent-notification`;
+		if (localStorage[settingKey] === 'true') {
+			checkBox.setAttribute('checked', '');
+		}
+		checkBox.addEventListener('change', event => {
+			localStorage[settingKey] = event.target.checked;
+			if (Notification.permission === 'granted'
+				&& localStorage[`${location.pathname} always-show-notification`] === 'true'
+			) {
+				notify(); // to update silent option
+			}
+		});
+	}
+}
 </script>
+
 
 <div style="display: none;" id="share-this-page-container">
 	<h2>このアプリを共有</h2>
