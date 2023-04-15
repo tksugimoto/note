@@ -291,4 +291,23 @@
 	}
 	</script>
 </div>
+
+<h2>ログ(開発中)</h2>
+<script>
+{
+	const pre = document.createElement('pre');
+	document.body.append(pre);
+	window.log = message => {
+		pre.append(`${new Date().toLocaleString()} ${message}\n`);
+	};
+	navigator.serviceWorker.addEventListener('message', event => {
+		console.log(event);
+		window.log(`[v${event.data.CACHE_VERSION}] ${event.data.type}: ${event.data.message}`);
+	});
+	window.addEventListener('unhandledrejection', event => {
+		console.log(event);
+		window.log(`UNHANDLED PROMISE REJECTION: ${event.reason}`);
+	});
+}
+</script>
 </body>

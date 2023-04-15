@@ -1,4 +1,4 @@
-const CACHE_VERSION = '2023/04/12-17:50';
+const CACHE_VERSION = '2023/04/12-17:50' + new Date().toLocaleString();
 const CACHE_NAME_SEPARATOR = ' '; // path 中の 半角スペース は url encode されるため混同される可能性がない
 const CACHE_NAME = `${self.registration.scope}${CACHE_NAME_SEPARATOR}${CACHE_VERSION}`;
 
@@ -61,6 +61,10 @@ const showNotification = ({
 	silent,
 }) => {
 	const title = 'Handle Clipboard';
+	log('showNotification', {
+		title,
+		silent,
+	});
 	return self.registration.showNotification(title, {
 		body: 'Open',
 		icon: './icons/144.png',
@@ -70,12 +74,14 @@ const showNotification = ({
 };
 
 self.addEventListener('message', event => {
+	log('on message', event.data.method, event);
 	if (event.data.method === 'start-notification') {
 		event.waitUntil(showNotification({
 			silent: event.data.silent,
 		}));
 	} else if (event.data.method === 'stop-notification') {
 		const promise = self.registration.getNotifications().then(notifications => {
+			log('notifications', notifications);
 			notifications.forEach(n => n.close());
 		});
 		event.waitUntil(promise);
@@ -83,6 +89,7 @@ self.addEventListener('message', event => {
 });
 
 self.addEventListener('notificationclick', (event) => {
+	log('on notificationclick', event);
 	if (event.notification.tag === 'open') {
 		event.waitUntil(self.clients.openWindow('./?from=notification'));
 	}
@@ -91,8 +98,30 @@ self.addEventListener('notificationclick', (event) => {
 // Android Chrome: 動作確認済み
 // Windows Chrome: デフォルトだと未発火 ( chrome://flags/#enable-system-notifications を disabled にすれば発火する )
 self.addEventListener('notificationclose', (event) => {
+	log('on notificationclose', event.notification.tag, event);
 	// event.waitUntil を使うと無限に通知を出せない
 	showNotification({
 		silent: event.notification.silent,
 	});
 });
+
+const log = (type, message) => {
+	console.log(CACHE_VERSION, type, message);
+	self.clients.matchAll().then(clients => {
+		message = JSON.stringify(message);
+		clients.forEach(client => {
+			client.postMessage({
+				CACHE_VERSION,
+				type,
+				message,
+			});
+		});
+	});
+};
+
+
+self.addEventListener('unhandledrejection', event => {
+	log('on unhandledrejection', event);
+});
+
+log('on load');
