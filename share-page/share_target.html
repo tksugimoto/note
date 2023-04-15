@@ -43,7 +43,25 @@
 </ul>
 <script>
 {
-	let autoClose = false;
+	class BooleanSetting {
+		constructor(key) {
+			this._key = `${location.pathname} ${key}`;
+			this._defaultValue = false;
+			this._current = (localStorage[this._key] || String(this._defaultValue)) === 'true';
+		}
+		get current() {
+			return this._current;
+		}
+		/**
+		 * @param {boolean} value
+		 */
+		save(value) {
+			this._current = value;
+			localStorage[this._key] = value;
+		}
+	}
+
+	const autoCloseSetting = new BooleanSetting('auto-close');
 	const searchParams = new URL(document.URL).searchParams;
 	const title = searchParams.get('title') || '';
 	const text = searchParams.get('text') || '';
@@ -161,7 +179,7 @@
 		button.innerText = name;
 		button.addEventListener('click', () => {
 			const result = callback();
-			if (autoClose) {
+			if (autoCloseSetting.current) {
 				if (result instanceof Promise) result.then(() => window.close());
 				else window.close();
 			}
@@ -178,15 +196,15 @@
 
 	{
 		const checkBox = document.getElementById('hide-content');
-		const settingKey = `${location.pathname} hide-content`;
-		if (localStorage[settingKey] === 'true') { // default: 隠さない
+		const hideContentSetting = new BooleanSetting('hide-content');
+		if (hideContentSetting.current) {
 			shareButtons.classList.add('hide-content');
 			window.customElements.whenDefined('check-box').then(() => {
 				checkBox.checked = true;
 			});
 		}
 		checkBox.addEventListener('change', event => {
-			localStorage[settingKey] = event.target.checked;
+			hideContentSetting.save(event.target.checked);
 			if (event.target.checked) {
 				shareButtons.classList.add('hide-content');
 			} else {
@@ -197,16 +215,13 @@
 
 	{
 		const checkBox = document.getElementById('auto-close');
-		const settingKey = `${location.pathname} auto-close`;
-		autoClose = localStorage[settingKey] === 'true'; // default: 自動で閉じない
-		if (autoClose) {
+		if (autoCloseSetting.current) {
 			window.customElements.whenDefined('check-box').then(() => {
 				checkBox.checked = true;
 			});
 		}
 		checkBox.addEventListener('change', event => {
-			autoClose = event.target.checked;
-			localStorage[settingKey] = event.target.checked;
+			autoCloseSetting.save(event.target.checked);
 		});
 	}
 }
