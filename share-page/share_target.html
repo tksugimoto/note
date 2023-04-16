@@ -199,9 +199,7 @@
 		const hideContentSetting = new BooleanSetting('hide-content');
 		if (hideContentSetting.current) {
 			shareButtons.classList.add('hide-content');
-			window.customElements.whenDefined('check-box').then(() => {
-				checkBox.checked = true;
-			});
+			checkBox.setAttribute('checked', '');
 		}
 		checkBox.addEventListener('change', event => {
 			hideContentSetting.save(event.target.checked);
@@ -216,9 +214,7 @@
 	{
 		const checkBox = document.getElementById('auto-close');
 		if (autoCloseSetting.current) {
-			window.customElements.whenDefined('check-box').then(() => {
-				checkBox.checked = true;
-			});
+			checkBox.setAttribute('checked', '');
 		}
 		checkBox.addEventListener('change', event => {
 			autoCloseSetting.save(event.target.checked);
