@@ -70,24 +70,40 @@
 
 	input.focus();
 
-	if (navigator.share) {
-		const button = document.createElement('button');
-		button.innerText = '共有する';
-		button.addEventListener('click', () => {
-			const imageExtension = 'png';
-			const mimeType = `image/${imageExtension}`;
-			canvas.toBlob(blob => {
+	const toFile = _canvas => {
+		const imageExtension = 'png';
+		const mimeType = `image/${imageExtension}`;
+		return new Promise(resolve => {
+			_canvas.toBlob(blob => {
 				const fileName = `image.${imageExtension}`; // 拡張子がない場合、 DOMException: Permission denied となってしまう
 				const file = new File([blob], fileName, {
 					type: blob.type,
 				});
-				navigator.share({
-					files: [file],
-				});
+				resolve(file);
 			}, mimeType);
 		});
-		document.body.append(button);
-	}
+	};
+
+
+	toFile(canvas).then(file => {
+		const data = {
+			files: [file],
+		};
+		return navigator.canShare && navigator.canShare(data);
+	}).then(canShare => {
+		if (canShare) {
+			const button = document.createElement('button');
+			button.innerText = '共有する';
+			button.addEventListener('click', () => {
+				toFile(canvas).then(file => {
+					navigator.share({
+						files: [file],
+					});
+				});
+			});
+			document.body.append(button);
+		}
+	});
 }
 </script>
 </body>
