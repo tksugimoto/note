@@ -53,9 +53,9 @@
 		button.innerText = '共有する';
 		button.addEventListener('click', () => {
 			navigator.share({
-			text: document.title,
-			url: location.href,
-		});
+				text: document.title,
+				url: location.href,
+			});
 		});
 		container.append(button);
 	}
