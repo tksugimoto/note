@@ -104,6 +104,77 @@
 			document.body.append(button);
 		}
 	});
+
+	{
+		// debug
+		toFile(canvas).then(file => {
+			const title = 'title';
+			const text = 'text';
+			const url = 'https://example.com';
+			const files = [file];
+			[{
+				title,
+			}, {
+				title,
+				text,
+			}, {
+				title,
+				text,
+				url,
+			}, {
+				title,
+				text,
+				files,
+			}, {
+				title,
+				text,
+				url,
+				files,
+			}, {
+				title,
+				url,
+			}, {
+				title,
+				url,
+				files,
+			}, {
+				title,
+				files,
+			}, {
+				text,
+			}, {
+				text,
+				url,
+			}, {
+				text,
+				url,
+				files,
+			}, {
+				text,
+				files,
+			}, {
+				url,
+			}, {
+				url,
+				files,
+			}, {
+				files,
+			}].forEach(data => {
+				const canShare = navigator.canShare && navigator.canShare(data);
+				const button = document.createElement('button');
+				button.innerText = JSON.stringify({
+					canShare,
+					keys: Object.keys(data).join(', '),
+				});
+				button.style.textAlign = 'left';
+				button.style.marginTop = '10px';
+				button.addEventListener('click', () => {
+					navigator.share(data);
+				});
+				document.body.append(button);
+			});
+		});
+	}
 }
 </script>
 </body>
