@@ -6,6 +6,8 @@ const urlsToCache = [
 	'./',
 	'./index.html',
 	'https://tksugimoto.github.io/my-web-components/check-box/check-box.js',
+	'https://unpkg.com/react@18/umd/react.development.js',
+	'https://unpkg.com/react-dom@18/umd/react-dom.development.js',
 ];
 
 const toNoCacheRequest = url => {
