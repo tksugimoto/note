@@ -1,4 +1,4 @@
-const CACHE_VERSION = '2023/04/19-19:25';
+const CACHE_VERSION = '2023/06/18-18:55';
 const CACHE_NAME_SEPARATOR = ' '; // path 中の 半角スペース は url encode されるため混同される可能性がない
 const CACHE_NAME = `${self.registration.scope}${CACHE_NAME_SEPARATOR}${CACHE_VERSION}`;
 
@@ -6,6 +6,9 @@ const urlsToCache = [
 	'./',
 	'./index.html',
 	'https://tksugimoto.github.io/my-web-components/check-box/check-box.js',
+	'https://unpkg.com/react@18/umd/react.production.min.js',
+	'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js',
+	'https://unpkg.com/prop-types@15.6/prop-types.js',
 ];
 
 const toNoCacheRequest = url => {

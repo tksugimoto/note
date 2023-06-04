@@ -37,6 +37,9 @@
 		}
 	</style>
 	<script type="module" src="https://tksugimoto.github.io/my-web-components/check-box/check-box.js"></script>
+	<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+	<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+	<script src="https://unpkg.com/prop-types@15.6/prop-types.js"></script>
 </head>
 <body>
 <h1>クリップボードの中身を便利に処理するツール(Progressive web apps, PWA)</h1>
@@ -57,48 +60,82 @@
 </ol>
 
 <h2>Handle Clipboard</h2>
-<button id="read-clipboard">クリップボードを読み取る</button>
-<pre id="text" style="display: none;"></pre>
-<ul id="action-buttons"></ul>
-<h3>Settings</h3>
-<ul class="setting-list">
-	<li><check-box id="auto-read-clipboard">自動的にクリップボードを読み取る</check-box></li>
-	<li><check-box id="hide-content">内容を非表示にする</check-box></li>
-	<li><check-box id="auto-close">選択時に自動で閉じる</check-box></li>
-	<li><check-box id="always-show-notification">通知から開けるようにする(常時表示)</check-box></li>
-	<li><check-box id="silent-notification">サイレント通知</check-box></li>
-</ul>
+<div id="app"></div>
 <script>
-{
-	class BooleanSetting {
-		constructor(key) {
-			this._key = `${location.pathname} ${key}`;
-			this._defaultValue = false;
-			this._current = (localStorage[this._key] || String(this._defaultValue)) === 'true';
-		}
-		get current() {
-			return this._current;
-		}
-		/**
-		 * @param {boolean} value
-		 */
-		save(value) {
-			this._current = value;
-			localStorage[this._key] = value;
-		}
-	}
-	const autoClose = new BooleanSetting('auto-close');
+/* global React, ReactDOM, PropTypes */
+const {
+	createElement,
+	useState,
+	useEffect,
+	useRef,
+	useMemo,
+	useCallback,
+} = React;
 
-	const originalTitle = document.title;
-	const onClipboardRead = clipboardText => {
+const useBooleanSetting = (key) => {
+	const _key = `${location.pathname} ${key}`;
+	const [current, setValue] = useState(() => {
+		const defaultValue = false;
+		return (localStorage[_key] || String(defaultValue)) === 'true';
+	});
+	const save = useCallback(value => {
+		setValue(value);
+		localStorage[_key] = value;
+	}, [_key]);
+	return [current, save];
+};
+
+const CheckBox = ({
+	text,
+	checked,
+	disabled,
+	onChange,
+}) => {
+	const elemRef = useRef(null);
+	useEffect(() => {
+		const checkBox = elemRef.current;
+		const callback = event => {
+			onChange(event.target.checked);
+		};
+		checkBox.addEventListener('change', callback);
+		return () => {
+			checkBox.removeEventListener('change', callback);
+		};
+	});
+	return createElement('check-box', {
+		ref: elemRef,
+		checked: checked ? '' : null,
+		disabled: disabled ? '' : null,
+	}, text);
+};
+CheckBox.propTypes = {
+	text: PropTypes.string.isRequired,
+	checked: PropTypes.bool.isRequired,
+	disabled: PropTypes.bool,
+	onChange: PropTypes.func.isRequired,
+};
+
+
+const App = () => {
+	const [clipboardText, setClipboardText] = useState(undefined);
+	const alreadyClipboardRead = clipboardText !== undefined;
+
+	const [autoReadClipboard, setAutoReadClipboard] = useBooleanSetting('auto-read-clipboard');
+	const [isHideContent, setHideContent] = useBooleanSetting('hide-content');
+	const [autoClose, setAutoClose] = useBooleanSetting('auto-close');
+	const [alwaysShowNotification, setAlwaysShowNotification] = useBooleanSetting('always-show-notification');
+	const [silentNotification, setSilentNotification] = useBooleanSetting('silent-notification');
+
+	const originalTitle = useRef(document.title).current;
+	useEffect(() => {
 		document.title = `${originalTitle}: ${clipboardText}`;
-		const textElement = document.getElementById('text');
-		textElement.innerText = clipboardText;
-		textElement.style.display = '';
+		return () => {
+			document.title = originalTitle;
+		};
+	}, [clipboardText, originalTitle]);
 
-		const actionButtons = document.getElementById('action-buttons');
-		actionButtons.innerText = '';
-		[{
+	const generateButtons = () => {
+		return [{
 			name: 'Twitterで検索',
 			callback: () => {
 				const params = new URLSearchParams({
@@ -114,36 +151,102 @@
 				});
 				window.open(`https://www.google.com/search?${params.toString()}`);
 			},
-		}].forEach(({name, callback}) => {
-			const li = document.createElement('li');
-			const button = document.createElement('button');
-			button.innerText = name;
-			button.addEventListener('click', () => {
-				const result = callback();
-				if (autoClose.current) {
-					if (result instanceof Promise) result.then(() => window.close());
-					else window.close();
-				}
-			});
-			li.append(button);
-			actionButtons.append(li);
+		}].map(({name, callback}) => {
+			return createElement('button', {
+				onClick: () => {
+					const result = callback();
+					if (autoClose) {
+						if (result instanceof Promise) result.then(() => window.close());
+						else window.close();
+					}
+				},
+			}, name);
 		});
 	};
 
-	document.getElementById('read-clipboard').addEventListener('click', () => {
-		navigator.clipboard.readText().then(onClipboardRead);
-	});
+	const readClipboardButton = useMemo(() => createElement('button', {
+		onClick: () => navigator.clipboard.readText().then(setClipboardText),
+	}, 'クリップボードを読み取る'), []);
 
-	{
-		const checkBox = document.getElementById('auto-read-clipboard');
-		const setting = new BooleanSetting('auto-read-clipboard');
-		if (setting.current) {
-			navigator.clipboard.readText().then(onClipboardRead);
-			checkBox.setAttribute('checked', '');
+	useEffect(() => {
+		document.body.classList[isHideContent ? 'add' : 'remove']('hide-content');
+	}, [isHideContent]);
+
+	const postMessage = message => {
+		navigator.serviceWorker.ready.then(registration => {
+			registration.active.postMessage(message);
+		});
+	};
+	const notify = useCallback((options) => {
+		postMessage({
+			method: 'start-notification',
+			silent: options?.silentNotification ?? silentNotification,
+		});
+	}, [silentNotification]);
+
+	useEffect(() => {
+		if (new URL(document.URL).searchParams.get('from') === 'notification') {
+			notify();
 		}
-		checkBox.addEventListener('change', event => {
-			const checked = event.target.checked;
-			setting.save(checked);
+		// 1回のみ実施する
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	useEffect(() => {
+		if (!alreadyClipboardRead && autoReadClipboard) {
+			navigator.clipboard.readText().then(setClipboardText);
+		}
+		// 1回のみ実施する
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	const [clipboardReadDenied, setClipboardReadDenied] = useState(false);
+	useEffect(() => {
+		const onChange = result => {
+			setClipboardReadDenied(result.state === 'denied');
+		};
+		navigator.permissions.query({
+			name: 'clipboard-read',
+			allowWithoutGesture: true,
+		}).then(result => {
+			onChange(result);
+			result.onchange = () => {
+				onChange(result);
+			};
+		});
+	}, []);
+
+	const [notificationDenied, setNotificationDenied] = useState(false);
+	useEffect(() => {
+		const onChange = result => {
+			setNotificationDenied(result.state === 'denied');
+		};
+		navigator.permissions.query({
+			name: 'notifications',
+		}).then(result => {
+			onChange(result);
+			result.onchange = () => {
+				onChange(result);
+			};
+		});
+	}, []);
+
+	if (Notification.permission !== 'granted' && alwaysShowNotification) {
+		setAlwaysShowNotification(false);
+		return;
+	}
+
+
+	const wrapWithLi = (elem, i) => createElement('li', {
+		key: i,
+	}, elem);
+
+	const settings = [{
+		text: `自動的にクリップボードを読み取る${clipboardReadDenied ? '※ クリップボードの読み取りを許可してください' : ''}`,
+		checked: autoReadClipboard,
+		disabled: clipboardReadDenied,
+		onChange: checked => {
+			setAutoReadClipboard(checked);
 			if (checked) {
 				navigator.permissions.query({
 					name: 'clipboard-read',
@@ -155,85 +258,22 @@
 					}
 				});
 			}
-		});
-		const originalCheckboxText = checkBox.innerText;
-		const onStateChange = state => {
-			if (state === 'denied') {
-				checkBox.setAttribute('disabled', '');
-				checkBox.append('※ クリップボードの読み取りを許可してください');
-			} else { // granted, prompt
-				checkBox.removeAttribute('disabled');
-				checkBox.innerText = originalCheckboxText;
-			}
-		};
-		navigator.permissions.query({
-			name: 'clipboard-read',
-			allowWithoutGesture: true,
-		}).then(result => {
-			onStateChange(result.state);
-			result.onchange = () => {
-				onStateChange(result.state);
-			};
-		});
-	}
-
-	{
-		const checkBox = document.getElementById('hide-content');
-		const setting = new BooleanSetting('hide-content');
-		if (setting.current) {
-			document.body.classList.add('hide-content');
-			checkBox.setAttribute('checked', '');
-		}
-		checkBox.addEventListener('change', event => {
-			setting.save(event.target.checked);
-			if (event.target.checked) {
-				document.body.classList.add('hide-content');
-			} else {
-				document.body.classList.remove('hide-content');
-			}
-		});
-	}
-
-	{
-		const checkBox = document.getElementById('auto-close');
-		if (autoClose.current) {
-			checkBox.setAttribute('checked', '');
-		}
-		checkBox.addEventListener('change', event => {
-			autoClose.save(event.target.checked);
-		});
-	}
-
-	const alwaysShowNotificationSetting = new BooleanSetting('always-show-notification');
-	const silentNotificationSetting = new BooleanSetting('silent-notification');
-
-	const postMessage = message => {
-		navigator.serviceWorker.ready.then(registration => {
-			registration.active.postMessage(message);
-		});
-	};
-	const notify = () => {
-		postMessage({
-			method: 'start-notification',
-			silent: silentNotificationSetting.current,
-		});
-	};
-	if (new URL(document.URL).searchParams.get('from') === 'notification') {
-		notify();
-	}
-
-	{
-		const checkBox = document.getElementById('always-show-notification');
-		if (alwaysShowNotificationSetting.current) {
-			checkBox.setAttribute('checked', '');
-		}
-		if (Notification.permission !== 'granted') {
-			checkBox.removeAttribute('checked');
-			alwaysShowNotificationSetting.save(false);
-		}
-		checkBox.addEventListener('change', event => {
-			alwaysShowNotificationSetting.save(event.target.checked);
-			if (event.target.checked) {
+		},
+	}, {
+		text: '内容を非表示にする',
+		checked: isHideContent,
+		onChange: setHideContent,
+	}, {
+		text: '選択時に自動で閉じる',
+		checked: autoClose,
+		onChange: setAutoClose,
+	}, {
+		text: '通知から開けるようにする(常時表示)' + (notificationDenied ? '※ 通知を許可してください' : ''),
+		checked: alwaysShowNotification,
+		disabled: notificationDenied,
+		onChange: checked => {
+			setAlwaysShowNotification(checked);
+			if (checked) {
 				switch (Notification.permission) {
 					case 'granted':
 						notify();
@@ -249,42 +289,49 @@
 					method: 'stop-notification',
 				});
 			}
-		});
-		const originalCheckboxText = checkBox.innerText;
-		const onStateChange = state => {
-			if (state === 'denied') {
-				checkBox.setAttribute('disabled', '');
-				checkBox.append('※ 通知を許可してください');
-			} else { // granted, prompt
-				checkBox.removeAttribute('disabled');
-				checkBox.innerText = originalCheckboxText;
-			}
-		};
-		navigator.permissions.query({
-			name: 'notifications',
-		}).then(result => {
-			onStateChange(result.state);
-			result.onchange = () => {
-				onStateChange(result.state);
-			};
-		});
-	}
-
-	{
-		const checkBox = document.getElementById('silent-notification');
-		if (silentNotificationSetting.current) {
-			checkBox.setAttribute('checked', '');
-		}
-		checkBox.addEventListener('change', event => {
-			silentNotificationSetting.save(event.target.checked);
+		},
+	}, {
+		text: 'サイレント通知',
+		checked: silentNotification,
+		onChange: checked => {
+			setSilentNotification(checked);
 			if (Notification.permission === 'granted'
 				&& localStorage[`${location.pathname} always-show-notification`] === 'true'
 			) {
-				notify(); // to update silent option
+				// to update silent option
+				notify({
+					silentNotification: checked,
+				});
 			}
+		},
+	}].map(({text, checked, disabled, onChange}) => {
+		return createElement(CheckBox, {
+			checked,
+			disabled,
+			text,
+			onChange,
 		});
-	}
-}
+	});
+
+	return createElement(
+		React.Fragment,
+		{},
+		readClipboardButton,
+		alreadyClipboardRead && createElement('pre', {
+			id: 'text',
+		}, clipboardText),
+		alreadyClipboardRead && createElement('ul', {
+			id: 'action-buttons',
+		}, generateButtons().map(wrapWithLi)),
+		createElement('h3', {}, 'Settings'),
+		createElement('ul', {
+			className: 'setting-list',
+		}, settings.map(wrapWithLi)),
+	);
+};
+ReactDOM
+	.createRoot(document.getElementById('app'))
+	.render(createElement(App));
 </script>
 
 <div style="display: none;" id="share-this-page-container">
