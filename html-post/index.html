@@ -120,7 +120,7 @@ Content-Disposition: form-data; name="key2"
 111
 ------WebKitFormBoundaryBVmwnK3AahF4DqPD--</pre>
 <script type="text/javascript">
-	document.getElementById("post-by-js-formdata").addEventListener("click", evt => {
+	document.getElementById("post-by-js-formdata").addEventListener("click", () => {
 		var data = new FormData();
 		data.append("key1", "aaa");
 		data.append("key2", "bbb");
@@ -165,7 +165,7 @@ aaa
 ------WebKitFormBoundaryT5FSlKNDJROBCMtY--
 </pre>
 <script type="text/javascript">
-	document.getElementById("post-by-js-raw-file").addEventListener("click", evt => {
+	document.getElementById("post-by-js-raw-file").addEventListener("click", () => {
 		var data = new FormData();
 		data.append("file", document.getElementById("file1").files[0]);
 		data.append("key", "aaa");
@@ -197,7 +197,7 @@ Body (Raw)
 bbb
 </pre>
 <script type="text/javascript">
-	document.getElementById("post-by-js-raw-string").addEventListener("click", evt => {
+	document.getElementById("post-by-js-raw-string").addEventListener("click", () => {
 		fetch("/dummy/js/raw/string", {
 			method: "post",
 			body: "bbb"
@@ -231,7 +231,7 @@ Body (Raw)
 {"a":1,"b":2}
 </pre>
 <script type="text/javascript">
-	document.getElementById("post-by-js-json").addEventListener("click", evt => {
+	document.getElementById("post-by-js-json").addEventListener("click", () => {
 		fetch("/dummy/js/raw/json", {
 			method: "post",
 			headers: {
@@ -270,7 +270,7 @@ Body (Raw)
 
 </pre>
 <script type="text/javascript">
-	document.getElementById("post-by-js-raw-file-fetch").addEventListener("click", evt => {
+	document.getElementById("post-by-js-raw-file-fetch").addEventListener("click", () => {
 		var file = document.getElementById("file2").files[0];
 		fetch("/dummy/js/raw/file/fetch", {
 			method: "post",
@@ -304,7 +304,7 @@ Body (Raw)
 
 </pre>
 <script type="text/javascript">
-	document.getElementById("post-by-js-raw-file-XMLHttpRequest").addEventListener("click", evt => {
+	document.getElementById("post-by-js-raw-file-XMLHttpRequest").addEventListener("click", () => {
 		var file = document.getElementById("file3").files[0];
 		var xhr = new XMLHttpRequest();
 		xhr.open("post", "/dummy/js/raw/file/XMLHttpRequest", true);
