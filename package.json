@@ -1,4 +1,8 @@
 {
   "private": true,
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.42.0",
+    "eslint-plugin-html": "^7.1.0"
+  }
 }
