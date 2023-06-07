@@ -1,2 +1,5 @@
 # docker-compose
 .env
+
+# node
+node_modules/
