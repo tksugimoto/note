@@ -23,5 +23,6 @@ module.exports = {
 		quotes: ['warn', 'single', {
 			avoidEscape: true,
 		}],
+		'comma-dangle': ['error', 'always-multiline'],
 	},
 };
