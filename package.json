@@ -1,6 +1,9 @@
 {
   "private": true,
   "license": "MIT",
+  "scripts": {
+    "lint": "eslint --ext .js,.html ."
+  },
   "devDependencies": {
     "eslint": "^8.42.0",
     "eslint-plugin-html": "^7.1.0"

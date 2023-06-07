@@ -1,0 +1,21 @@
+module.exports = {
+	root: true,
+	env: {
+		browser: true,
+		es6: true,
+	},
+	plugins: [
+		'html',
+	],
+	parserOptions: {
+		ecmaVersion: 2020,
+	},
+	overrides: [{
+		files: ['.eslintrc.js'],
+		env: {
+			node: true,
+		},
+	}],
+	rules: {
+	},
+};
