@@ -64,11 +64,11 @@
 	</svg>
 </p>
 <script type="text/javascript">
-const input = document.getElementById("input");
+const input = document.getElementById('input');
 const updateLink = filePath => {
-	let encodedPath = encodeURI(filePath.replace(/\\/g, "/"));
+	let encodedPath = encodeURI(filePath.replace(/\\/g, '/'));
 	if (!encodedPath.startsWith('//')) {
-		encodedPath = "//localhost/" + encodedPath;
+		encodedPath = '//localhost/' + encodedPath;
 	}
 
 	const url = `file:${encodedPath}`.replace(/[#]/g, encodeURIComponent);
@@ -96,9 +96,9 @@ const onUpdate = () => {
 	updateLink(filePath || input.placeholder);
 	location.hash = filePath;
 };
-input.addEventListener("change", onUpdate);
-input.addEventListener("paste", onUpdate);
-input.addEventListener("keyup", onUpdate);
+input.addEventListener('change', onUpdate);
+input.addEventListener('paste', onUpdate);
+input.addEventListener('keyup', onUpdate);
 
 if (location.hash.length > 1) {
 	const filePath = decodeURI(location.hash.slice(1));

@@ -74,9 +74,9 @@ const onPaste = evt => {
 		location.hash = base64String;
 	});
 };
-document.getElementById("input-from-file").addEventListener("change", onChange);
+document.getElementById('input-from-file').addEventListener('change', onChange);
 
-document.getElementById("input-from-clipboard").addEventListener("paste", onPaste);
+document.getElementById('input-from-clipboard').addEventListener('paste', onPaste);
 
 if (location.hash.length > 1) {
 	const base64String = location.hash.slice(1);
