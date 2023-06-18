@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Text to Image</title>
+	<style>
+		#input {
+			width: 100%;
+		}
+		#canvas {
+			border: 2px solid gray;
+		}
+		button {
+			cursor: pointer;
+			display: block;
+		}
+	</style>
+</head>
+<body>
+<h1>テキストを画像にする</h1>
+
+<textarea id="input" placeholder="サンプルテキスト" rows="10"></textarea>
+<canvas id="canvas"></canvas>
+<script>
+{
+	const input = document.getElementById('input');
+	const canvas = document.getElementById('canvas');
+	const context = canvas.getContext('2d');
+
+	const Margin = {
+		bottom: 5, // margin 無しだと下端にピッタリで読みづらいため
+	};
+	const fontSizePx = 20;
+	const Color = {
+		background: 'white',
+		text: 'black',
+	};
+
+	const render = () => {
+		const text = input.value || input.placeholder;
+		const lines = text.split('\n').flatMap(line => {
+			// 折り返し有効化
+			return [...line].reduce((texts, char) => {
+				if (context.measureText(texts.at(-1) + char).width > context.canvas.clientWidth) {
+					texts.push('');
+				}
+				texts[texts.length - 1] += char;
+				return texts;
+			}, ['']);
+		});
+
+		canvas.height = fontSizePx * lines.length + Margin.bottom;
+		context.font = `${fontSizePx}px serif`;
+		context.fillStyle = Color.background;
+		context.fillRect(0, 0, context.canvas.clientWidth, context.canvas.clientHeight);
+		context.fillStyle = Color.text;
+		lines.forEach((line, i) => {
+			const x = 0;
+			const y = fontSizePx * (i + 1);
+			context.fillText(line, x, y);
+		});
+	};
+
+	render();
+	input.addEventListener('change', render);
+	input.addEventListener('keyup', e => {
+		if (e.key === 'Enter') render();
+	});
+
+	input.focus();
+
+	const toFile = _canvas => {
+		const imageExtension = 'png';
+		const mimeType = `image/${imageExtension}`;
+		return new Promise(resolve => {
+			_canvas.toBlob(blob => {
+				const fileName = `image.${imageExtension}`; // 拡張子がない場合、 DOMException: Permission denied となってしまう
+				const file = new File([blob], fileName, {
+					type: blob.type,
+				});
+				resolve(file);
+			}, mimeType);
+		});
+	};
+
+
+	toFile(canvas).then(file => {
+		const data = {
+			files: [file],
+		};
+		return navigator.canShare && navigator.canShare(data);
+	}).then(canShare => {
+		if (canShare) {
+			const button = document.createElement('button');
+			button.innerText = '共有する';
+			button.addEventListener('click', () => {
+				toFile(canvas).then(file => {
+					navigator.share({
+						files: [file],
+					});
+				});
+			});
+			document.body.append(button);
+		}
+	});
+
+	{
+		// debug
+		toFile(canvas).then(file => {
+			const title = 'title';
+			const text = 'text';
+			const url = 'https://example.com';
+			const files = [file];
+			[{
+				title,
+			}, {
+				title,
+				text,
+			}, {
+				title,
+				text,
+				url,
+			}, {
+				title,
+				text,
+				files,
+			}, {
+				title,
+				text,
+				url,
+				files,
+			}, {
+				title,
+				url,
+			}, {
+				title,
+				url,
+				files,
+			}, {
+				title,
+				files,
+			}, {
+				text,
+			}, {
+				text,
+				url,
+			}, {
+				text,
+				url,
+				files,
+			}, {
+				text,
+				files,
+			}, {
+				url,
+			}, {
+				url,
+				files,
+			}, {
+				files,
+			}].forEach(data => {
+				const canShare = navigator.canShare && navigator.canShare(data);
+				const button = document.createElement('button');
+				button.innerText = JSON.stringify({
+					canShare,
+					keys: Object.keys(data).join(', '),
+				});
+				button.style.textAlign = 'left';
+				button.style.marginTop = '10px';
+				button.addEventListener('click', () => {
+					navigator.share(data);
+				});
+				document.body.append(button);
+			});
+		});
+	}
+}
+</script>
+</body>
