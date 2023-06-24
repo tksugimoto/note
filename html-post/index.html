@@ -54,7 +54,7 @@ Script
 var data = new FormData(document.getElementById("form1"));
 fetch("/dummy/js/formdata/html", {
 	method: "post",
-	body: data
+	body: data,
 });
 </pre>
 Header
@@ -80,7 +80,7 @@ aaa
 		var data = new FormData(document.getElementById('form1'));
 		fetch('/dummy/js/formdata/html', {
 			method: 'post',
-			body: data
+			body: data,
 		});
 	});
 </script>
@@ -97,7 +97,7 @@ data.append("key2", "bbb");
 data.append("key2", "111");
 fetch("/dummy/js/formdata/js", {
 	method: "post",
-	body: data
+	body: data,
 });
 </pre>
 Header
@@ -127,7 +127,7 @@ Content-Disposition: form-data; name="key2"
 		data.append('key2', '111');
 		fetch('/dummy/js/formdata/js', {
 			method: 'post',
-			body: data
+			body: data,
 		});
 	});
 </script>
@@ -144,7 +144,7 @@ data.append("file", document.getElementById("file1").files[0]);
 data.append("key", "aaa");
 fetch("/dummy/js/raw/file", {
 	method: "post",
-	body: data
+	body: data,
 });
 </pre>
 Header
@@ -171,7 +171,7 @@ aaa
 		data.append('key', 'aaa');
 		fetch('/dummy/js/raw/file', {
 			method: 'post',
-			body: data
+			body: data,
 		});
 	});
 </script>
@@ -200,8 +200,8 @@ bbb
 	document.getElementById('post-by-js-raw-string').addEventListener('click', () => {
 		fetch('/dummy/js/raw/string', {
 			method: 'post',
-			body: 'bbb'
-		});
+			body: 'bbb',
+	});
 	});
 </script>
 
@@ -214,12 +214,12 @@ Script
 fetch("/dummy/js/raw/json", {
 	method: "post",
 	headers: {
-		"Content-Type": "application/json"
+		"Content-Type": "application/json",
 	},
 	body: JSON.stringify({
 		a: 1,
-		b: 2
-	})
+		b: 2,
+	}),
 });
 </pre>
 Header
@@ -235,12 +235,12 @@ Body (Raw)
 		fetch('/dummy/js/raw/json', {
 			method: 'post',
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({
 				a: 1,
-				b: 2
-			})
+				b: 2,
+			}),
 		});
 	});
 </script>
@@ -256,7 +256,7 @@ var file = document.getElementById("file2").files[0];
 fetch("/dummy/js/raw/file/fetch", {
 	method: "post",
 	headers: {
-		"Content-Type": file.type
+		"Content-Type": file.type,
 	},
 	body: file
 });
@@ -275,9 +275,9 @@ Body (Raw)
 		fetch('/dummy/js/raw/file/fetch', {
 			method: 'post',
 			headers: {
-				'Content-Type': file.type
+				'Content-Type': file.type,
 			},
-			body: file
+			body: file,
 		});
 	});
 </script>
