@@ -25,5 +25,6 @@ module.exports = {
 		}],
 		'comma-dangle': ['error', 'always-multiline'],
 		semi: 'error',
+		'no-var': 'error',
 	},
 };

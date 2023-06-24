@@ -42,34 +42,34 @@
 		<pre class="log"></pre>
 		<script>
 			(function () {
-				var count = 0;
-				var container = document.currentScript.parentNode;
-				var outer = container.querySelector('.outer');
-				var inner = container.querySelector('.inner');
-				var target = container.querySelector('.target');
-				var log = container.querySelector('.log');
-				
+				let count = 0;
+				const container = document.currentScript.parentNode;
+				const outer = container.querySelector('.outer');
+				const inner = container.querySelector('.inner');
+				const target = container.querySelector('.target');
+				const log = container.querySelector('.log');
+
 				container.addEventListener('click', function () {
 					log.appendChild(document.createTextNode((count++) + ': container\n'));
 				});
 				container.addEventListener('click', function () {
 					log.appendChild(document.createTextNode((count++) + ': container (useCapture = true)\n'));
 				}, true);
-				
+
 				outer.addEventListener('click', function () {
 					log.appendChild(document.createTextNode((count++) + ': outer\n'));
 				});
 				outer.addEventListener('click', function () {
 					log.appendChild(document.createTextNode((count++) + ': outer (useCapture = true)\n'));
 				}, true);
-				
+
 				inner.addEventListener('click', function () {
 					log.appendChild(document.createTextNode((count++) + ': inner\n'));
 				});
 				inner.addEventListener('click', function () {
 					log.appendChild(document.createTextNode((count++) + ': inner (useCapture = true)\n'));
 				}, true);
-				
+
 				target.addEventListener('click', function () {
 					log.appendChild(document.createTextNode((count++) + ': target\n'));
 				});
@@ -79,7 +79,7 @@
 			})();
 		</script>
 	</div>
-	
+
 	<div class="container">
 		<h2>Event.stopPropagation()の確認1</h2>
 		<div class="outer">
@@ -93,27 +93,27 @@
 		<pre class="log"></pre>
 		<script>
 			(function () {
-				var count = 0;
-				var container = document.currentScript.parentNode;
-				var outer = container.querySelector('.outer');
-				var inner = container.querySelector('.inner');
-				var target = container.querySelector('.target');
-				var log = container.querySelector('.log');
-				
+				let count = 0;
+				const container = document.currentScript.parentNode;
+				const outer = container.querySelector('.outer');
+				const inner = container.querySelector('.inner');
+				const target = container.querySelector('.target');
+				const log = container.querySelector('.log');
+
 				container.addEventListener('click', function () {
 					log.appendChild(document.createTextNode((count++) + ': container\n'));
 				});
 				container.addEventListener('click', function () {
 					log.appendChild(document.createTextNode((count++) + ': container (useCapture = true)\n'));
 				}, true);
-				
+
 				outer.addEventListener('click', function () {
 					log.appendChild(document.createTextNode((count++) + ': outer\n'));
 				});
 				outer.addEventListener('click', function () {
 					log.appendChild(document.createTextNode((count++) + ': outer (useCapture = true)\n'));
 				}, true);
-				
+
 				inner.addEventListener('click', function (event) {
 					event.stopPropagation();
 					log.appendChild(document.createTextNode((count++) + ': inner\n'));
@@ -122,7 +122,7 @@
 				inner.addEventListener('click', function () {
 					log.appendChild(document.createTextNode((count++) + ': inner (useCapture = true)\n'));
 				}, true);
-				
+
 				target.addEventListener('click', function () {
 					log.appendChild(document.createTextNode((count++) + ': target\n'));
 				});
@@ -132,7 +132,7 @@
 			})();
 		</script>
 	</div>
-	
+
 	<div class="container">
 		<h2>Event.stopPropagation()の確認2</h2>
 		<div class="outer">
@@ -146,27 +146,27 @@
 		<pre class="log"></pre>
 		<script>
 			(function () {
-				var count = 0;
-				var container = document.currentScript.parentNode;
-				var outer = container.querySelector('.outer');
-				var inner = container.querySelector('.inner');
-				var target = container.querySelector('.target');
-				var log = container.querySelector('.log');
-				
+				let count = 0;
+				const container = document.currentScript.parentNode;
+				const outer = container.querySelector('.outer');
+				const inner = container.querySelector('.inner');
+				const target = container.querySelector('.target');
+				const log = container.querySelector('.log');
+
 				container.addEventListener('click', function () {
 					log.appendChild(document.createTextNode((count++) + ': container\n'));
 				});
 				container.addEventListener('click', function () {
 					log.appendChild(document.createTextNode((count++) + ': container (useCapture = true)\n'));
 				}, true);
-				
+
 				outer.addEventListener('click', function () {
 					log.appendChild(document.createTextNode((count++) + ': outer\n'));
 				});
 				outer.addEventListener('click', function () {
 					log.appendChild(document.createTextNode((count++) + ': outer (useCapture = true)\n'));
 				}, true);
-				
+
 				inner.addEventListener('click', function () {
 					log.appendChild(document.createTextNode((count++) + ': inner\n'));
 				});
@@ -175,7 +175,7 @@
 					log.appendChild(document.createTextNode((count++) + ': inner (useCapture = true)\n'));
 					log.appendChild(document.createTextNode('useCapture = trueの方でevent.stopPropagation()\n'));
 				}, true);
-				
+
 				target.addEventListener('click', function () {
 					log.appendChild(document.createTextNode((count++) + ': target\n'));
 				});
