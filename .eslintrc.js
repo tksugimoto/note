@@ -24,5 +24,6 @@ module.exports = {
 			avoidEscape: true,
 		}],
 		'comma-dangle': ['error', 'always-multiline'],
+		semi: 'error',
 	},
 };
