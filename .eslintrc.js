@@ -10,6 +10,9 @@ module.exports = {
 	parserOptions: {
 		ecmaVersion: 2020,
 	},
+	extends: [
+		'eslint:recommended',
+	],
 	overrides: [{
 		files: ['.eslintrc.js'],
 		env: {
