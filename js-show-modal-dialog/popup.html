@@ -20,23 +20,23 @@
 	<input type="button" id="change-dialogArgument3-element" value="元Windowから渡されたhtml要素を操作"><br>
 	<input type="button" id="close-window" value="閉じる（ブラウザの「×」ボタンでも可）">
 	<script type="text/javascript">
-		window.addEventListener("load", () => {
+		window.addEventListener('load', () => {
 			// ソースコード欄でhtmlに既に値が入っているように見えてしまうため onload で実行
 			if (window.dialogArguments) {
-				document.getElementById("dialogArgument1").innerText = window.dialogArguments.dialogArgument1;
-				document.getElementById("dialogArgument2").innerText = JSON.stringify(window.dialogArguments.dialogArgument2);
-				document.getElementById("change-dialogArgument3-element").addEventListener("click", () => {
+				document.getElementById('dialogArgument1').innerText = window.dialogArguments.dialogArgument1;
+				document.getElementById('dialogArgument2').innerText = JSON.stringify(window.dialogArguments.dialogArgument2);
+				document.getElementById('change-dialogArgument3-element').addEventListener('click', () => {
 					window.dialogArguments.textarea.value = `[${new Date().toLocaleString()}] dialog windowから値を入力しました`;
 				});
 			} else {
-				document.getElementById("change-dialogArgument3-element").style.display = "none";
+				document.getElementById('change-dialogArgument3-element').style.display = 'none';
 			}
-			document.getElementById("set-returnValue").addEventListener("click", () => {
+			document.getElementById('set-returnValue').addEventListener('click', () => {
 				window.returnValue = {
-					returnValue1: document.getElementById("returnValue1").value
+					returnValue1: document.getElementById('returnValue1').value
 				};
 			});
-			document.getElementById("close-window").addEventListener("click", () => {
+			document.getElementById('close-window').addEventListener('click', () => {
 				window.close();
 			});
 		});
@@ -45,6 +45,6 @@
 <h2>ソースコード</h2>
 <pre id="code"></pre>
 <script type="text/javascript">
-	document.getElementById("code").innerText = document.getElementById("main").innerHTML.replace(/^\t/mg, "").trim();
+	document.getElementById('code').innerText = document.getElementById('main').innerHTML.replace(/^\t/mg, '').trim();
 </script>
 </body>

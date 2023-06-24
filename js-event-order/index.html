@@ -23,55 +23,55 @@ conosleを開いて画面内をクリック！
 <pre id="code">
 </pre>
 <script id="script">
-document.addEventListener("click", () => {
-	console.log("1: document.addEventListener");
+document.addEventListener('click', () => {
+	console.log('1: document.addEventListener');
 });
-document.addEventListener("click", () => {
-	console.log("2: document.addEventListener, useCapture = true");
+document.addEventListener('click', () => {
+	console.log('2: document.addEventListener, useCapture = true');
 }, true);
-document.body.addEventListener("click", () => {
-	console.log("3: document.body.addEventListener");
+document.body.addEventListener('click', () => {
+	console.log('3: document.body.addEventListener');
 });
-document.body.addEventListener("click", () => {
-	console.log("4: document.body.addEventListener, useCapture = true");
+document.body.addEventListener('click', () => {
+	console.log('4: document.body.addEventListener, useCapture = true');
 }, true);
-window.addEventListener("click", () => {
-	console.log("5: window.addEventListener");
+window.addEventListener('click', () => {
+	console.log('5: window.addEventListener');
 });
-window.addEventListener("click", () => {
-	console.log("6: window.addEventListener, useCapture = true");
+window.addEventListener('click', () => {
+	console.log('6: window.addEventListener, useCapture = true');
 }, true);
 
 document.onclick = () => {
-	console.log("7: document.onclick");
+	console.log('7: document.onclick');
 };
 document.body.onclick = () => {
-	console.log("8: document.body.onclick");
+	console.log('8: document.body.onclick');
 };
 window.onclick = () => {
-	console.log("9: window.onclick");
+	console.log('9: window.onclick');
 };
 
-document.addEventListener("click", () => {
-	console.log("10: document.addEventListener");
+document.addEventListener('click', () => {
+	console.log('10: document.addEventListener');
 });
-document.addEventListener("click", () => {
-	console.log("11: document.addEventListener, useCapture = true");
+document.addEventListener('click', () => {
+	console.log('11: document.addEventListener, useCapture = true');
 }, true);
-document.body.addEventListener("click", () => {
-	console.log("12: document.body.addEventListener");
+document.body.addEventListener('click', () => {
+	console.log('12: document.body.addEventListener');
 });
-document.body.addEventListener("click", () => {
-	console.log("13: document.body.addEventListener, useCapture = true");
+document.body.addEventListener('click', () => {
+	console.log('13: document.body.addEventListener, useCapture = true');
 }, true);
-window.addEventListener("click", () => {
-	console.log("14: window.addEventListener");
+window.addEventListener('click', () => {
+	console.log('14: window.addEventListener');
 });
-window.addEventListener("click", () => {
-	console.log("15: window.addEventListener, useCapture = true");
+window.addEventListener('click', () => {
+	console.log('15: window.addEventListener, useCapture = true');
 }, true);
 </script>
 <script type="text/javascript">
-	document.getElementById("code").innerText = document.getElementById("script").innerText.trim();
+	document.getElementById('code').innerText = document.getElementById('script').innerText.trim();
 </script>
 </body>

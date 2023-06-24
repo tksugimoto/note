@@ -75,11 +75,11 @@ aaa
 ------WebKitFormBoundaryR6Owro7IYyNPyj2V--
 </pre>
 <script type="text/javascript">
-	document.getElementById("form1").addEventListener("submit", evt => {
+	document.getElementById('form1').addEventListener('submit', evt => {
 		evt.preventDefault();
-		var data = new FormData(document.getElementById("form1"));
-		fetch("/dummy/js/formdata/html", {
-			method: "post",
+		var data = new FormData(document.getElementById('form1'));
+		fetch('/dummy/js/formdata/html', {
+			method: 'post',
 			body: data
 		});
 	});
@@ -120,13 +120,13 @@ Content-Disposition: form-data; name="key2"
 111
 ------WebKitFormBoundaryBVmwnK3AahF4DqPD--</pre>
 <script type="text/javascript">
-	document.getElementById("post-by-js-formdata").addEventListener("click", () => {
+	document.getElementById('post-by-js-formdata').addEventListener('click', () => {
 		var data = new FormData();
-		data.append("key1", "aaa");
-		data.append("key2", "bbb");
-		data.append("key2", "111");
-		fetch("/dummy/js/formdata/js", {
-			method: "post",
+		data.append('key1', 'aaa');
+		data.append('key2', 'bbb');
+		data.append('key2', '111');
+		fetch('/dummy/js/formdata/js', {
+			method: 'post',
 			body: data
 		});
 	});
@@ -165,12 +165,12 @@ aaa
 ------WebKitFormBoundaryT5FSlKNDJROBCMtY--
 </pre>
 <script type="text/javascript">
-	document.getElementById("post-by-js-raw-file").addEventListener("click", () => {
+	document.getElementById('post-by-js-raw-file').addEventListener('click', () => {
 		var data = new FormData();
-		data.append("file", document.getElementById("file1").files[0]);
-		data.append("key", "aaa");
-		fetch("/dummy/js/raw/file", {
-			method: "post",
+		data.append('file', document.getElementById('file1').files[0]);
+		data.append('key', 'aaa');
+		fetch('/dummy/js/raw/file', {
+			method: 'post',
 			body: data
 		});
 	});
@@ -197,10 +197,10 @@ Body (Raw)
 bbb
 </pre>
 <script type="text/javascript">
-	document.getElementById("post-by-js-raw-string").addEventListener("click", () => {
-		fetch("/dummy/js/raw/string", {
-			method: "post",
-			body: "bbb"
+	document.getElementById('post-by-js-raw-string').addEventListener('click', () => {
+		fetch('/dummy/js/raw/string', {
+			method: 'post',
+			body: 'bbb'
 		});
 	});
 </script>
@@ -231,11 +231,11 @@ Body (Raw)
 {"a":1,"b":2}
 </pre>
 <script type="text/javascript">
-	document.getElementById("post-by-js-json").addEventListener("click", () => {
-		fetch("/dummy/js/raw/json", {
-			method: "post",
+	document.getElementById('post-by-js-json').addEventListener('click', () => {
+		fetch('/dummy/js/raw/json', {
+			method: 'post',
 			headers: {
-				"Content-Type": "application/json"
+				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
 				a: 1,
@@ -270,12 +270,12 @@ Body (Raw)
 
 </pre>
 <script type="text/javascript">
-	document.getElementById("post-by-js-raw-file-fetch").addEventListener("click", () => {
-		var file = document.getElementById("file2").files[0];
-		fetch("/dummy/js/raw/file/fetch", {
-			method: "post",
+	document.getElementById('post-by-js-raw-file-fetch').addEventListener('click', () => {
+		var file = document.getElementById('file2').files[0];
+		fetch('/dummy/js/raw/file/fetch', {
+			method: 'post',
 			headers: {
-				"Content-Type": file.type
+				'Content-Type': file.type
 			},
 			body: file
 		});
@@ -304,11 +304,11 @@ Body (Raw)
 
 </pre>
 <script type="text/javascript">
-	document.getElementById("post-by-js-raw-file-XMLHttpRequest").addEventListener("click", () => {
-		var file = document.getElementById("file3").files[0];
+	document.getElementById('post-by-js-raw-file-XMLHttpRequest').addEventListener('click', () => {
+		var file = document.getElementById('file3').files[0];
 		var xhr = new XMLHttpRequest();
-		xhr.open("post", "/dummy/js/raw/file/XMLHttpRequest", true);
-		xhr.setRequestHeader("Content-Type", file.type);
+		xhr.open('post', '/dummy/js/raw/file/XMLHttpRequest', true);
+		xhr.setRequestHeader('Content-Type', file.type);
 		xhr.send(file);
 	});
 </script>

@@ -44,37 +44,37 @@
 			(function () {
 				var count = 0;
 				var container = document.currentScript.parentNode;
-				var outer = container.querySelector(".outer");
-				var inner = container.querySelector(".inner");
-				var target = container.querySelector(".target");
-				var log = container.querySelector(".log");
+				var outer = container.querySelector('.outer');
+				var inner = container.querySelector('.inner');
+				var target = container.querySelector('.target');
+				var log = container.querySelector('.log');
 				
-				container.addEventListener("click", function () {
-					log.appendChild(document.createTextNode((count++) + ": container\n"));
+				container.addEventListener('click', function () {
+					log.appendChild(document.createTextNode((count++) + ': container\n'));
 				});
-				container.addEventListener("click", function () {
-					log.appendChild(document.createTextNode((count++) + ": container (useCapture = true)\n"));
+				container.addEventListener('click', function () {
+					log.appendChild(document.createTextNode((count++) + ': container (useCapture = true)\n'));
 				}, true);
 				
-				outer.addEventListener("click", function () {
-					log.appendChild(document.createTextNode((count++) + ": outer\n"));
+				outer.addEventListener('click', function () {
+					log.appendChild(document.createTextNode((count++) + ': outer\n'));
 				});
-				outer.addEventListener("click", function () {
-					log.appendChild(document.createTextNode((count++) + ": outer (useCapture = true)\n"));
+				outer.addEventListener('click', function () {
+					log.appendChild(document.createTextNode((count++) + ': outer (useCapture = true)\n'));
 				}, true);
 				
-				inner.addEventListener("click", function () {
-					log.appendChild(document.createTextNode((count++) + ": inner\n"));
+				inner.addEventListener('click', function () {
+					log.appendChild(document.createTextNode((count++) + ': inner\n'));
 				});
-				inner.addEventListener("click", function () {
-					log.appendChild(document.createTextNode((count++) + ": inner (useCapture = true)\n"));
+				inner.addEventListener('click', function () {
+					log.appendChild(document.createTextNode((count++) + ': inner (useCapture = true)\n'));
 				}, true);
 				
-				target.addEventListener("click", function () {
-					log.appendChild(document.createTextNode((count++) + ": target\n"));
+				target.addEventListener('click', function () {
+					log.appendChild(document.createTextNode((count++) + ': target\n'));
 				});
-				target.addEventListener("click", function () {
-					log.appendChild(document.createTextNode((count++) + ": target (useCapture = true)\n"));
+				target.addEventListener('click', function () {
+					log.appendChild(document.createTextNode((count++) + ': target (useCapture = true)\n'));
 				}, true);
 			})();
 		</script>
@@ -95,39 +95,39 @@
 			(function () {
 				var count = 0;
 				var container = document.currentScript.parentNode;
-				var outer = container.querySelector(".outer");
-				var inner = container.querySelector(".inner");
-				var target = container.querySelector(".target");
-				var log = container.querySelector(".log");
+				var outer = container.querySelector('.outer');
+				var inner = container.querySelector('.inner');
+				var target = container.querySelector('.target');
+				var log = container.querySelector('.log');
 				
-				container.addEventListener("click", function () {
-					log.appendChild(document.createTextNode((count++) + ": container\n"));
+				container.addEventListener('click', function () {
+					log.appendChild(document.createTextNode((count++) + ': container\n'));
 				});
-				container.addEventListener("click", function () {
-					log.appendChild(document.createTextNode((count++) + ": container (useCapture = true)\n"));
+				container.addEventListener('click', function () {
+					log.appendChild(document.createTextNode((count++) + ': container (useCapture = true)\n'));
 				}, true);
 				
-				outer.addEventListener("click", function () {
-					log.appendChild(document.createTextNode((count++) + ": outer\n"));
+				outer.addEventListener('click', function () {
+					log.appendChild(document.createTextNode((count++) + ': outer\n'));
 				});
-				outer.addEventListener("click", function () {
-					log.appendChild(document.createTextNode((count++) + ": outer (useCapture = true)\n"));
+				outer.addEventListener('click', function () {
+					log.appendChild(document.createTextNode((count++) + ': outer (useCapture = true)\n'));
 				}, true);
 				
-				inner.addEventListener("click", function (event) {
+				inner.addEventListener('click', function (event) {
 					event.stopPropagation();
-					log.appendChild(document.createTextNode((count++) + ": inner\n"));
-					log.appendChild(document.createTextNode("useCapture = falseの方でevent.stopPropagation()\n"));
+					log.appendChild(document.createTextNode((count++) + ': inner\n'));
+					log.appendChild(document.createTextNode('useCapture = falseの方でevent.stopPropagation()\n'));
 				});
-				inner.addEventListener("click", function () {
-					log.appendChild(document.createTextNode((count++) + ": inner (useCapture = true)\n"));
+				inner.addEventListener('click', function () {
+					log.appendChild(document.createTextNode((count++) + ': inner (useCapture = true)\n'));
 				}, true);
 				
-				target.addEventListener("click", function () {
-					log.appendChild(document.createTextNode((count++) + ": target\n"));
+				target.addEventListener('click', function () {
+					log.appendChild(document.createTextNode((count++) + ': target\n'));
 				});
-				target.addEventListener("click", function () {
-					log.appendChild(document.createTextNode((count++) + ": target (useCapture = true)\n"));
+				target.addEventListener('click', function () {
+					log.appendChild(document.createTextNode((count++) + ': target (useCapture = true)\n'));
 				}, true);
 			})();
 		</script>
@@ -148,39 +148,39 @@
 			(function () {
 				var count = 0;
 				var container = document.currentScript.parentNode;
-				var outer = container.querySelector(".outer");
-				var inner = container.querySelector(".inner");
-				var target = container.querySelector(".target");
-				var log = container.querySelector(".log");
+				var outer = container.querySelector('.outer');
+				var inner = container.querySelector('.inner');
+				var target = container.querySelector('.target');
+				var log = container.querySelector('.log');
 				
-				container.addEventListener("click", function () {
-					log.appendChild(document.createTextNode((count++) + ": container\n"));
+				container.addEventListener('click', function () {
+					log.appendChild(document.createTextNode((count++) + ': container\n'));
 				});
-				container.addEventListener("click", function () {
-					log.appendChild(document.createTextNode((count++) + ": container (useCapture = true)\n"));
+				container.addEventListener('click', function () {
+					log.appendChild(document.createTextNode((count++) + ': container (useCapture = true)\n'));
 				}, true);
 				
-				outer.addEventListener("click", function () {
-					log.appendChild(document.createTextNode((count++) + ": outer\n"));
+				outer.addEventListener('click', function () {
+					log.appendChild(document.createTextNode((count++) + ': outer\n'));
 				});
-				outer.addEventListener("click", function () {
-					log.appendChild(document.createTextNode((count++) + ": outer (useCapture = true)\n"));
+				outer.addEventListener('click', function () {
+					log.appendChild(document.createTextNode((count++) + ': outer (useCapture = true)\n'));
 				}, true);
 				
-				inner.addEventListener("click", function () {
-					log.appendChild(document.createTextNode((count++) + ": inner\n"));
+				inner.addEventListener('click', function () {
+					log.appendChild(document.createTextNode((count++) + ': inner\n'));
 				});
-				inner.addEventListener("click", function (event) {
+				inner.addEventListener('click', function (event) {
 					event.stopPropagation();
-					log.appendChild(document.createTextNode((count++) + ": inner (useCapture = true)\n"));
-					log.appendChild(document.createTextNode("useCapture = trueの方でevent.stopPropagation()\n"));
+					log.appendChild(document.createTextNode((count++) + ': inner (useCapture = true)\n'));
+					log.appendChild(document.createTextNode('useCapture = trueの方でevent.stopPropagation()\n'));
 				}, true);
 				
-				target.addEventListener("click", function () {
-					log.appendChild(document.createTextNode((count++) + ": target\n"));
+				target.addEventListener('click', function () {
+					log.appendChild(document.createTextNode((count++) + ': target\n'));
 				});
-				target.addEventListener("click", function () {
-					log.appendChild(document.createTextNode((count++) + ": target (useCapture = true)\n"));
+				target.addEventListener('click', function () {
+					log.appendChild(document.createTextNode((count++) + ': target (useCapture = true)\n'));
 				}, true);
 			})();
 		</script>
