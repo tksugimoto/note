@@ -1,0 +1,15 @@
+{
+	"name": "TEL",
+	"start_url": "index.html",
+	"display": "standalone",
+	"icons": [{
+		"src": "icons/144.png",
+		"sizes": "144x144",
+		"type": "image/png",
+		"purpose": "any"
+	}],
+	"protocol_handlers": [{
+		"protocol": "tel",
+		"url": "/?tel=%s"
+	}]
+}
