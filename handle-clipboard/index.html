@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" href="./icons/144.png">
+	<link rel="manifest" href="./manifest.json">
+	<title>Handle Clipboard App</title>
+	<script src="./js/install-service-worker.js"></script>
+	<style>
+		button {
+			cursor: pointer;
+		}
+		#action-buttons li {
+			padding: 10px 0;
+		}
+		#action-buttons button {
+			padding: 10px;
+		}
+		#text {
+			border: 2px solid gray;
+			padding: 5px;
+
+			word-break: break-all;
+			white-space: pre-wrap;
+		}
+		.hide-content #text {
+			display: none;
+		}
+		.setting-list {
+			list-style: none;
+			padding-inline-start: 0;
+			margin-block: 0;
+		}
+		.setting-list li {
+			padding: 0;
+		}
+	</style>
+	<script type="module" src="https://tksugimoto.github.io/my-web-components/check-box/check-box.js"></script>
+	<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+	<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+	<script src="https://unpkg.com/prop-types@15.6/prop-types.js"></script>
+</head>
+<body>
+<h1>クリップボードの中身を便利に処理するツール(Progressive web apps, PWA)</h1>
+
+<h2>できること</h2>
+クリップボードに入っているテキストで
+<ul>
+	<li>Twitterで検索</li>
+	<li>Google検索</li>
+</ul>
+
+<h2>使い方</h2>
+<ol>
+	<li>(事前準備) このPWAをインストール (Android & Chrome で動作確認済み)</li>
+	<li>クリップボードに何か（テキスト）をコピーする</li>
+	<li>このアプリを開く</li>
+	<li>「クリップボードを読み取る」をクリック</li>
+</ol>
+
+<h2>Handle Clipboard</h2>
+<div id="app"></div>
+<script>
+/* global React, ReactDOM, PropTypes */
+const {
+	createElement,
+	useState,
+	useEffect,
+	useRef,
+	useMemo,
+	useCallback,
+} = React;
+
+const useBooleanSetting = (key) => {
+	const _key = `${location.pathname} ${key}`;
+	const [current, setValue] = useState(() => {
+		const defaultValue = false;
+		return (localStorage[_key] || String(defaultValue)) === 'true';
+	});
+	const save = useCallback(value => {
+		setValue(value);
+		localStorage[_key] = value;
+	}, [_key]);
+	return [current, save];
+};
+
+const CheckBox = ({
+	text,
+	checked,
+	disabled,
+	onChange,
+}) => {
+	const elemRef = useRef(null);
+	useEffect(() => {
+		const checkBox = elemRef.current;
+		const callback = event => {
+			onChange(event.target.checked);
+		};
+		checkBox.addEventListener('change', callback);
+		return () => {
+			checkBox.removeEventListener('change', callback);
+		};
+	});
+	return createElement('check-box', {
+		ref: elemRef,
+		checked: checked ? '' : null,
+		disabled: disabled ? '' : null,
+	}, text);
+};
+CheckBox.propTypes = {
+	text: PropTypes.string.isRequired,
+	checked: PropTypes.bool.isRequired,
+	disabled: PropTypes.bool,
+	onChange: PropTypes.func.isRequired,
+};
+
+
+const App = () => {
+	const [clipboardText, setClipboardText] = useState(undefined);
+	const alreadyClipboardRead = clipboardText !== undefined;
+
+	const [autoReadClipboard, setAutoReadClipboard] = useBooleanSetting('auto-read-clipboard');
+	const [isHideContent, setHideContent] = useBooleanSetting('hide-content');
+	const [autoClose, setAutoClose] = useBooleanSetting('auto-close');
+	const [alwaysShowNotification, setAlwaysShowNotification] = useBooleanSetting('always-show-notification');
+	const [silentNotification, setSilentNotification] = useBooleanSetting('silent-notification');
+
+	const originalTitle = useRef(document.title).current;
+	useEffect(() => {
+		document.title = `${originalTitle}: ${clipboardText}`;
+		return () => {
+			document.title = originalTitle;
+		};
+	}, [clipboardText, originalTitle]);
+
+	const generateButtons = () => {
+		return [{
+			name: 'Twitterで検索',
+			callback: () => {
+				const params = new URLSearchParams({
+					q: clipboardText.replace(/\n/g, ' '),
+				});
+				window.open(`https://twitter.com/search?${params.toString()}`);
+			},
+		}, {
+			name: 'Google検索',
+			callback: () => {
+				const params = new URLSearchParams({
+					q: clipboardText.replace(/\n/g, ' '),
+				});
+				window.open(`https://www.google.com/search?${params.toString()}`);
+			},
+		}].map(({name, callback}) => {
+			return createElement('button', {
+				onClick: () => {
+					const result = callback();
+					if (autoClose) {
+						if (result instanceof Promise) result.then(() => window.close());
+						else window.close();
+					}
+				},
+			}, name);
+		});
+	};
+
+	const readClipboardButton = useMemo(() => createElement('button', {
+		onClick: () => navigator.clipboard.readText().then(setClipboardText),
+	}, 'クリップボードを読み取る'), []);
+
+	useEffect(() => {
+		document.body.classList[isHideContent ? 'add' : 'remove']('hide-content');
+	}, [isHideContent]);
+
+	const postMessage = message => {
+		navigator.serviceWorker.ready.then(registration => {
+			registration.active.postMessage(message);
+		});
+	};
+	const notify = useCallback((options) => {
+		postMessage({
+			method: 'start-notification',
+			silent: options?.silentNotification ?? silentNotification,
+		});
+	}, [silentNotification]);
+
+	useEffect(() => {
+		if (new URL(document.URL).searchParams.get('from') === 'notification') {
+			notify();
+		}
+		// 1回のみ実施する
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	useEffect(() => {
+		if (!alreadyClipboardRead && autoReadClipboard) {
+			navigator.clipboard.readText().then(setClipboardText);
+		}
+		// 1回のみ実施する
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	const [clipboardReadDenied, setClipboardReadDenied] = useState(false);
+	useEffect(() => {
+		const onChange = result => {
+			setClipboardReadDenied(result.state === 'denied');
+		};
+		navigator.permissions.query({
+			name: 'clipboard-read',
+			allowWithoutGesture: true,
+		}).then(result => {
+			onChange(result);
+			result.onchange = () => {
+				onChange(result);
+			};
+		});
+	}, []);
+
+	const [notificationDenied, setNotificationDenied] = useState(false);
+	useEffect(() => {
+		const onChange = result => {
+			setNotificationDenied(result.state === 'denied');
+		};
+		navigator.permissions.query({
+			name: 'notifications',
+		}).then(result => {
+			onChange(result);
+			result.onchange = () => {
+				onChange(result);
+			};
+		});
+	}, []);
+
+	if (Notification.permission !== 'granted' && alwaysShowNotification) {
+		setAlwaysShowNotification(false);
+		return;
+	}
+
+
+	const wrapWithLi = (elem, i) => createElement('li', {
+		key: i,
+	}, elem);
+
+	const settings = [{
+		text: `自動的にクリップボードを読み取る${clipboardReadDenied ? '※ クリップボードの読み取りを許可してください' : ''}`,
+		checked: autoReadClipboard,
+		disabled: clipboardReadDenied,
+		onChange: checked => {
+			setAutoReadClipboard(checked);
+			if (checked) {
+				navigator.permissions.query({
+					name: 'clipboard-read',
+					allowWithoutGesture: true,
+				}).then(result => {
+					if (result.state === 'prompt') {
+						// 事前に権限を要求しておく
+						navigator.clipboard.readText();
+					}
+				});
+			}
+		},
+	}, {
+		text: '内容を非表示にする',
+		checked: isHideContent,
+		onChange: setHideContent,
+	}, {
+		text: '選択時に自動で閉じる',
+		checked: autoClose,
+		onChange: setAutoClose,
+	}, {
+		text: '通知から開けるようにする(常時表示)' + (notificationDenied ? '※ 通知を許可してください' : ''),
+		checked: alwaysShowNotification,
+		disabled: notificationDenied,
+		onChange: checked => {
+			setAlwaysShowNotification(checked);
+			if (checked) {
+				switch (Notification.permission) {
+					case 'granted':
+						notify();
+						break;
+					case 'default':
+						Notification.requestPermission().then(result => {
+							if (result === 'granted') notify();
+						});
+						break;
+				}
+			} else {
+				postMessage({
+					method: 'stop-notification',
+				});
+			}
+		},
+	}, {
+		text: 'サイレント通知',
+		checked: silentNotification,
+		onChange: checked => {
+			setSilentNotification(checked);
+			if (Notification.permission === 'granted'
+				&& localStorage[`${location.pathname} always-show-notification`] === 'true'
+			) {
+				// to update silent option
+				notify({
+					silentNotification: checked,
+				});
+			}
+		},
+	}].map(({text, checked, disabled, onChange}) => {
+		return createElement(CheckBox, {
+			checked,
+			disabled,
+			text,
+			onChange,
+		});
+	});
+
+	return createElement(
+		React.Fragment,
+		{},
+		readClipboardButton,
+		alreadyClipboardRead && createElement('pre', {
+			id: 'text',
+		}, clipboardText),
+		alreadyClipboardRead && createElement('ul', {
+			id: 'action-buttons',
+		}, generateButtons().map(wrapWithLi)),
+		createElement('h3', {}, 'Settings'),
+		createElement('ul', {
+			className: 'setting-list',
+		}, settings.map(wrapWithLi)),
+	);
+};
+ReactDOM
+	.createRoot(document.getElementById('app'))
+	.render(createElement(App));
+</script>
+
+<div style="display: none;" id="share-this-page-container">
+	<h2>このアプリを共有</h2>
+	<script>
+	if (navigator.share) {
+		const originalTitle = document.title;
+		const container = document.getElementById('share-this-page-container');
+		container.style.display = '';
+		const button = document.createElement('button');
+		button.innerText = '共有する';
+		button.addEventListener('click', () => {
+			navigator.share({
+				text: originalTitle,
+				url: `${location.origin}${location.pathname}`, // 通知から開いた場合に付与される query を除去
+			});
+		});
+		container.append(button);
+	}
+	</script>
+</div>
+</body>
