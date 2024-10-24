@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<link rel="icon" href="./icons/144.png">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="manifest" href="./manifest.json">
+	<title>TEL</title>
+</head>
+<body>
+<h1>TEL</h1>
+<p id="output"></p>
+<script>
+	{
+		const searchParams = new URL(document.URL).searchParams;
+		const tel = searchParams.get('tel') ?? '';
+
+		document.getElementById('output').innerText = `tel: ${tel || '(なし)'}`;
+	}
+</script>
+</body>
