@@ -149,6 +149,13 @@
 			window.open(`https://www.google.com/search?${params.toString()}`);
 		},
 	}, {
+		name: '[URL] URLのみ をコピ－',
+		enabled: isUrl && Boolean(navigator.clipboard),
+		content: parsedUrl?.href,
+		callback: (content) => {
+			return navigator.clipboard.writeText(content);
+		},
+	}, {
 		name: '[URL] hostname をコピ－',
 		enabled: isUrl && Boolean(navigator.clipboard),
 		content: parsedUrl?.hostname,
