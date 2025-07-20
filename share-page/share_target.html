@@ -106,6 +106,13 @@
 			return navigator.clipboard.writeText(content);
 		},
 	}, {
+		name: 'テキスト をクリップボードにコピー',
+		enabled: Boolean(navigator.clipboard),
+		content: text,
+		callback: (content) => {
+			return navigator.clipboard.writeText(content);
+		},
+	}, {
 		name: '別アプリに共有',
 		enabled: Boolean(navigator.share),
 		content: [title, text, url].filter(Boolean).join('\n'),
