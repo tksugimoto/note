@@ -132,6 +132,16 @@
 			window.open(`https://twitter.com/intent/tweet?${params.toString()}`);
 		},
 	}, {
+		name: 'Twitterで検索（タイトル）',
+		enabled: true,
+		content: title,
+		callback: (content) => {
+			const params = new URLSearchParams({
+				q: content,
+			});
+			window.open(`https://twitter.com/search?${params.toString()}`);
+		},
+	}, {
 		name: 'Google カレンダーに登録',
 		enabled: true,
 		callback: () => {
