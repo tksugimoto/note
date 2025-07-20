@@ -95,27 +95,51 @@
 		name: 'クリップボードにコピー',
 		enabled: Boolean(navigator.clipboard),
 		content: [title, text, url].filter(Boolean).join('\n'),
-		callback: () => {
-			return navigator.clipboard.writeText([title, text, url].filter(Boolean).join('\n'));
+		callback: (content) => {
+			return navigator.clipboard.writeText(content);
+		},
+	}, {
+		name: 'タイトル をクリップボードにコピー',
+		enabled: Boolean(navigator.clipboard),
+		content: title,
+		callback: (content) => {
+			return navigator.clipboard.writeText(content);
+		},
+	}, {
+		name: 'テキスト をクリップボードにコピー',
+		enabled: Boolean(navigator.clipboard),
+		content: text,
+		callback: (content) => {
+			return navigator.clipboard.writeText(content);
 		},
 	}, {
 		name: '別アプリに共有',
 		enabled: Boolean(navigator.share),
 		content: [title, text, url].filter(Boolean).join('\n'),
-		callback: () => {
+		callback: (content) => {
 			return navigator.share({
-				text: [title, text, url].filter(Boolean).join('\n'),
+				text: content,
 			});
 		},
 	}, {
 		name: 'Twitterで共有',
 		enabled: true,
 		content: [title, text, url].filter(Boolean).join('\n'),
-		callback: () => {
+		callback: (content) => {
 			const params = new URLSearchParams({
-				text: [title, text, url].filter(Boolean).join('\n'),
+				text: content,
 			});
 			window.open(`https://twitter.com/intent/tweet?${params.toString()}`);
+		},
+	}, {
+		name: 'Twitterで検索（タイトル）',
+		enabled: true,
+		content: title,
+		callback: (content) => {
+			const params = new URLSearchParams({
+				q: content,
+			});
+			window.open(`https://twitter.com/search?${params.toString()}`);
 		},
 	}, {
 		name: 'Google カレンダーに登録',
@@ -132,9 +156,9 @@
 		name: 'タイトル で Google検索',
 		enabled: Boolean(title),
 		content: title,
-		callback: () => {
+		callback: (content) => {
 			const params = new URLSearchParams({
-				q: title,
+				q: content,
 			});
 			window.open(`https://www.google.com/search?${params.toString()}`);
 		},
@@ -142,25 +166,41 @@
 		name: 'テキスト で Google検索',
 		enabled: Boolean(text),
 		content: text?.replace(/\n/g, ' '),
-		callback: () => {
+		callback: (content) => {
 			const params = new URLSearchParams({
-				q: text.replace(/\n/g, ' '),
+				q: content,
 			});
 			window.open(`https://www.google.com/search?${params.toString()}`);
+		},
+	}, {
+		name: '[URL] URLのみ を別アプリに共有',
+		enabled: isUrl && Boolean(navigator.share),
+		content: parsedUrl?.href,
+		callback: (content) => {
+			return navigator.share({
+				text: content,
+			});
+		},
+	}, {
+		name: '[URL] URLのみ をコピ－',
+		enabled: isUrl && Boolean(navigator.clipboard),
+		content: parsedUrl?.href,
+		callback: (content) => {
+			return navigator.clipboard.writeText(content);
 		},
 	}, {
 		name: '[URL] hostname をコピ－',
 		enabled: isUrl && Boolean(navigator.clipboard),
 		content: parsedUrl?.hostname,
-		callback: () => {
-			return navigator.clipboard.writeText(parsedUrl.hostname);
+		callback: (content) => {
+			return navigator.clipboard.writeText(content);
 		},
 	}, {
 		name: '[URL] pathname をコピ－',
 		enabled: isUrl && Boolean(navigator.clipboard),
 		content: parsedUrl?.pathname,
-		callback: () => {
-			return navigator.clipboard.writeText(parsedUrl.pathname);
+		callback: (content) => {
+			return navigator.clipboard.writeText(content);
 		},
 	}, {
 		name: '[URL] query, hash を削除してコピ－',
@@ -178,7 +218,7 @@
 		const button = document.createElement('button');
 		button.innerText = name;
 		button.addEventListener('click', () => {
-			const result = callback();
+			const result = callback(content);
 			if (autoCloseSetting.current) {
 				if (result instanceof Promise) result.then(() => window.close());
 				else window.close();
