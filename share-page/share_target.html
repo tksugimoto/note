@@ -149,6 +149,15 @@
 			window.open(`https://www.google.com/search?${params.toString()}`);
 		},
 	}, {
+		name: '[URL] URLのみ を別アプリに共有',
+		enabled: isUrl && Boolean(navigator.share),
+		content: parsedUrl?.href,
+		callback: (content) => {
+			return navigator.share({
+				text: content,
+			});
+		},
+	}, {
 		name: '[URL] URLのみ をコピ－',
 		enabled: isUrl && Boolean(navigator.clipboard),
 		content: parsedUrl?.href,
