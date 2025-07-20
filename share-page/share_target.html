@@ -99,6 +99,13 @@
 			return navigator.clipboard.writeText(content);
 		},
 	}, {
+		name: 'タイトル をクリップボードにコピー',
+		enabled: Boolean(navigator.clipboard),
+		content: title,
+		callback: (content) => {
+			return navigator.clipboard.writeText(content);
+		},
+	}, {
 		name: '別アプリに共有',
 		enabled: Boolean(navigator.share),
 		content: [title, text, url].filter(Boolean).join('\n'),
