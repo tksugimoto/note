@@ -100,14 +100,14 @@
 		},
 	}, {
 		name: 'タイトル をクリップボードにコピー',
-		enabled: Boolean(navigator.clipboard),
+		enabled: Boolean(title && navigator.clipboard),
 		content: title,
 		callback: (content) => {
 			return navigator.clipboard.writeText(content);
 		},
 	}, {
 		name: 'テキスト をクリップボードにコピー',
-		enabled: Boolean(navigator.clipboard),
+		enabled: Boolean(text && navigator.clipboard),
 		content: text,
 		callback: (content) => {
 			return navigator.clipboard.writeText(content);
@@ -133,7 +133,7 @@
 		},
 	}, {
 		name: 'Twitterで検索（タイトル）',
-		enabled: true,
+		enabled: Boolean(title),
 		content: title,
 		callback: (content) => {
 			const params = new URLSearchParams({
