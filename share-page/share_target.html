@@ -100,14 +100,14 @@
 		},
 	}, {
 		name: 'タイトル をクリップボードにコピー',
-		enabled: Boolean(navigator.clipboard),
+		enabled: Boolean(title && navigator.clipboard),
 		content: title,
 		callback: (content) => {
 			return navigator.clipboard.writeText(content);
 		},
 	}, {
 		name: 'テキスト をクリップボードにコピー',
-		enabled: Boolean(navigator.clipboard),
+		enabled: Boolean(text && navigator.clipboard),
 		content: text,
 		callback: (content) => {
 			return navigator.clipboard.writeText(content);
@@ -133,8 +133,18 @@
 		},
 	}, {
 		name: 'Twitterで検索（タイトル）',
-		enabled: true,
+		enabled: Boolean(title),
 		content: title,
+		callback: (content) => {
+			const params = new URLSearchParams({
+				q: content,
+			});
+			window.open(`https://twitter.com/search?${params.toString()}`);
+		},
+	}, {
+		name: 'Twitterで検索（テキスト）',
+		enabled: Boolean(text),
+		content: text,
 		callback: (content) => {
 			const params = new URLSearchParams({
 				q: content,
@@ -171,6 +181,13 @@
 				q: content,
 			});
 			window.open(`https://www.google.com/search?${params.toString()}`);
+		},
+	}, {
+		name: '[URL] はてなブックマークを見る',
+		enabled: isUrl,
+		content: parsedUrl?.href,
+		callback: (content) => {
+			window.open(`https://b.hatena.ne.jp/entry/s/${content.replace(/^https?:[/]{2}/, '')}`);
 		},
 	}, {
 		name: '[URL] URLのみ を別アプリに共有',
