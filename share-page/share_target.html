@@ -214,6 +214,13 @@
 			window.open(`https://b.hatena.ne.jp/entry/s/${content.replace(/^https?:[/]{2}/, '')}`);
 		},
 	}, {
+		name: '[URL] ウェブ魚拓を見る',
+		enabled: isUrl,
+		content: parsedUrl?.href,
+		callback: (content) => {
+			window.open(`https://gyo.tc/${content}`);
+		},
+	}, {
 		name: '[URL] URLのみ を別アプリに共有',
 		enabled: isUrl && Boolean(navigator.share),
 		content: parsedUrl?.href,
