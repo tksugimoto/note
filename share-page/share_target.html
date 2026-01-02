@@ -99,6 +99,30 @@
 			return navigator.clipboard.writeText(content);
 		},
 	}, {
+		name: 'リンクとしてクリップボードにコピー',
+		enabled: isUrl && Boolean(navigator.clipboard),
+		content: () => {
+			const a = document.createElement('a');
+			a.href = parsedUrl.href;
+			a.innerText = title || text || url;
+			return a;
+		},
+		/** @type{function(HTMLAnchorElement)} */
+		callback: (content) => {
+			const a = content;
+
+			const items = [
+				['text/html', a.outerHTML],
+				['text/plain', [a.innerText, a.href].join('\n')], // text/plain がない場合、貼り付け先が受け付けてくれないことがある(例: Slack)
+			].map(([type, data]) => {
+				const blob = new Blob([data], { type });
+				return [type, blob];
+			});
+			return navigator.clipboard.write([
+				new ClipboardItem(Object.fromEntries(items)),
+			]);
+		},
+	}, {
 		name: 'タイトル をクリップボードにコピー',
 		enabled: Boolean(title && navigator.clipboard),
 		content: title,
@@ -229,8 +253,9 @@
 			_url.hash = '';
 			return navigator.clipboard.writeText(_url.href);
 		},
-	}].forEach(({name, callback, enabled, content}) => {
+	}].forEach(({name, callback, enabled, content: _content}) => {
 		if (!enabled) return;
+		const content = typeof _content === 'function' ? _content() : _content;
 		const li = document.createElement('li');
 		const button = document.createElement('button');
 		button.innerText = name;
@@ -245,7 +270,7 @@
 		if (content) {
 			const pre = document.createElement('pre');
 			pre.classList.add('content');
-			pre.innerText = content;
+			pre.append(content);
 			li.append(pre);
 		}
 		shareButtons.append(li);
