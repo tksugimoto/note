@@ -146,34 +146,34 @@
 			});
 		},
 	}, {
-		name: 'Twitterで共有',
+		name: 'Xで共有',
 		enabled: true,
 		content: [title, text, url].filter(Boolean).join('\n'),
 		callback: (content) => {
 			const params = new URLSearchParams({
 				text: content,
 			});
-			window.open(`https://twitter.com/intent/tweet?${params.toString()}`);
+			window.open(`https://x.com/intent/tweet?${params.toString()}`);
 		},
 	}, {
-		name: 'Twitterで検索（タイトル）',
+		name: 'Xで検索（タイトル）',
 		enabled: Boolean(title),
 		content: title,
 		callback: (content) => {
 			const params = new URLSearchParams({
 				q: content,
 			});
-			window.open(`https://twitter.com/search?${params.toString()}`);
+			window.open(`https://x.com/search?${params.toString()}`);
 		},
 	}, {
-		name: 'Twitterで検索（テキスト）',
+		name: 'Xで検索（テキスト）',
 		enabled: Boolean(text),
 		content: text,
 		callback: (content) => {
 			const params = new URLSearchParams({
 				q: content,
 			});
-			window.open(`https://twitter.com/search?${params.toString()}`);
+			window.open(`https://x.com/search?${params.toString()}`);
 		},
 	}, {
 		name: 'Google カレンダーに登録',
