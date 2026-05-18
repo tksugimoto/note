@@ -99,15 +99,39 @@
 			return navigator.clipboard.writeText(content);
 		},
 	}, {
+		name: 'リンクとしてクリップボードにコピー',
+		enabled: isUrl && Boolean(navigator.clipboard),
+		content: () => {
+			const a = document.createElement('a');
+			a.href = parsedUrl.href;
+			a.innerText = title || text || url;
+			return a;
+		},
+		/** @type{function(HTMLAnchorElement)} */
+		callback: (content) => {
+			const a = content;
+
+			const items = [
+				['text/html', a.outerHTML],
+				['text/plain', [a.innerText, a.href].join('\n')], // text/plain がない場合、貼り付け先が受け付けてくれないことがある(例: Slack)
+			].map(([type, data]) => {
+				const blob = new Blob([data], { type });
+				return [type, blob];
+			});
+			return navigator.clipboard.write([
+				new ClipboardItem(Object.fromEntries(items)),
+			]);
+		},
+	}, {
 		name: 'タイトル をクリップボードにコピー',
-		enabled: Boolean(navigator.clipboard),
+		enabled: Boolean(title && navigator.clipboard),
 		content: title,
 		callback: (content) => {
 			return navigator.clipboard.writeText(content);
 		},
 	}, {
 		name: 'テキスト をクリップボードにコピー',
-		enabled: Boolean(navigator.clipboard),
+		enabled: Boolean(text && navigator.clipboard),
 		content: text,
 		callback: (content) => {
 			return navigator.clipboard.writeText(content);
@@ -122,24 +146,34 @@
 			});
 		},
 	}, {
-		name: 'Twitterで共有',
+		name: 'Xで共有',
 		enabled: true,
 		content: [title, text, url].filter(Boolean).join('\n'),
 		callback: (content) => {
 			const params = new URLSearchParams({
 				text: content,
 			});
-			window.open(`https://twitter.com/intent/tweet?${params.toString()}`);
+			window.open(`https://x.com/intent/tweet?${params.toString()}`);
 		},
 	}, {
-		name: 'Twitterで検索（タイトル）',
-		enabled: true,
+		name: 'Xで検索（タイトル）',
+		enabled: Boolean(title),
 		content: title,
 		callback: (content) => {
 			const params = new URLSearchParams({
 				q: content,
 			});
-			window.open(`https://twitter.com/search?${params.toString()}`);
+			window.open(`https://x.com/search?${params.toString()}`);
+		},
+	}, {
+		name: 'Xで検索（テキスト）',
+		enabled: Boolean(text),
+		content: text,
+		callback: (content) => {
+			const params = new URLSearchParams({
+				q: content,
+			});
+			window.open(`https://x.com/search?${params.toString()}`);
 		},
 	}, {
 		name: 'Google カレンダーに登録',
@@ -150,7 +184,7 @@
 				text: title,
 				details: [text, url].filter(Boolean).join('\n'),
 			});
-			window.open(`http://www.google.com/calendar/event?${params.toString()}`);
+			window.open(`https://www.google.com/calendar/event?${params.toString()}`);
 		},
 	}, {
 		name: 'タイトル で Google検索',
@@ -171,6 +205,20 @@
 				q: content,
 			});
 			window.open(`https://www.google.com/search?${params.toString()}`);
+		},
+	}, {
+		name: '[URL] はてなブックマークを見る',
+		enabled: isUrl,
+		content: parsedUrl?.href,
+		callback: (content) => {
+			window.open(`https://b.hatena.ne.jp/entry/s/${content.replace(/^https?:[/]{2}/, '')}`);
+		},
+	}, {
+		name: '[URL] ウェブ魚拓を見る',
+		enabled: isUrl,
+		content: parsedUrl?.href,
+		callback: (content) => {
+			window.open(`https://gyo.tc/${content}`);
 		},
 	}, {
 		name: '[URL] URLのみ を別アプリに共有',
@@ -212,8 +260,9 @@
 			_url.hash = '';
 			return navigator.clipboard.writeText(_url.href);
 		},
-	}].forEach(({name, callback, enabled, content}) => {
+	}].forEach(({name, callback, enabled, content: _content}) => {
 		if (!enabled) return;
+		const content = typeof _content === 'function' ? _content() : _content;
 		const li = document.createElement('li');
 		const button = document.createElement('button');
 		button.innerText = name;
@@ -228,7 +277,7 @@
 		if (content) {
 			const pre = document.createElement('pre');
 			pre.classList.add('content');
-			pre.innerText = content;
+			pre.append(content);
 			li.append(pre);
 		}
 		shareButtons.append(li);
