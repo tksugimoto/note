@@ -180,10 +180,11 @@
 		enabled: true,
 		callback: () => {
 			const params = new URLSearchParams({
+				action: 'TEMPLATE',
 				text: title,
 				details: [text, url].filter(Boolean).join('\n'),
 			});
-			window.open(`https://calendar.google.com/calendar/r/eventedit?${params.toString()}`);
+			window.open(`http://www.google.com/calendar/event?${params.toString()}`);
 		},
 	}, {
 		name: 'タイトル で Google検索',
